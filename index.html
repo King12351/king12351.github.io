@@ -997,7 +997,8 @@ function skyline(g, W, H, opts){
       g.fillRect(x+bw*.15, top-bh*.06, bw*.7, bh*.06);
       g.fillRect(x+bw*.3, top-bh*.11, bw*.4, bh*.05);
       g.fillRect(x+bw/2-1.5, top-bh*.2, 3, bh*.1);
-    }    if(opts.outline){ g.strokeStyle = '#111'; g.lineWidth = 3; g.strokeRect(x, top, bw, bh+4); }
+    }
+    if(opts.outline){ g.strokeStyle = '#111'; g.lineWidth = 3; g.strokeRect(x, top, bw, bh+4); }
     if(opts.win){
       for(let wy = top+8; wy < H-6; wy += opts.win.gy) for(let wx = x+5; wx < x+bw-6; wx += opts.win.gx)
         if(R() < opts.win.p){ g.fillStyle = opts.win.col(); g.fillRect(wx, wy, opts.win.w, opts.win.h); }
@@ -1744,7 +1745,8 @@ fetch('site.json?v=' + Date.now(), {cache:'no-store'}).then(r => r.ok ? r.json()
   if(!d) return;
   siteSongs = d.songs || [];
   rebuildPlaylist(); renderSongList();
-  if(d.defaultTheme && THEMES[d.defaultTheme] && !saved) applyTheme(d.defaultTheme);
+  // normal visitors always get the theme he saved for everyone; only #owner keeps its own last pick
+  if(d.defaultTheme && THEMES[d.defaultTheme] && (!isOwner || !saved)) applyTheme(d.defaultTheme);
 }).catch(()=>{});
 
 /* ---------- hidden owner music panel ---------- */
@@ -1752,12 +1754,10 @@ const GH = CONFIG.github;
 const getTok = () => { try{ return localStorage.getItem('ghToken') || ''; }catch(e){ return ''; } };
 const status = (msg) => $('mpStatus').textContent = msg;
 async function gh(path, opts = {}){
-  const isRead = !opts.method || opts.method === 'GET';
-  const r = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`, { ...opts,
-    cache: isRead ? 'no-store' : (opts.cache || 'default'),
-    headers: { Authorization: `Bearer ${getTok()}`, Accept: 'application/vnd.github+json',
-      ...(isRead ? {'Cache-Control':'no-cache'} : {}),
-      ...(opts.body ? {'Content-Type':'application/json'} : {}) } });
+  // GET requests skip GitHub's cache so we always see the newest copy (avoids "does not match" errors)
+  const url = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}` + (opts.method ? '' : `${path.includes('?') ? '&' : '?'}_=${Date.now()}`);
+  const r = await fetch(url, { cache: 'no-store', ...opts,
+    headers: { Authorization: `Bearer ${getTok()}`, Accept: 'application/vnd.github+json', ...(opts.body ? {'Content-Type':'application/json'} : {}) } });
   if(!r.ok && r.status !== 404){ let m = r.status; try{ m = (await r.json()).message; }catch(e){} throw new Error(m); }
   return r;
 }
@@ -1765,38 +1765,28 @@ const textB64 = str => btoa(unescape(encodeURIComponent(str)));
 const fileB64 = f => new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result.split(',')[1]); fr.onerror = rej; fr.readAsDataURL(f); });
 async function shaOf(path){ const r = await gh(`${path}?ref=${GH.branch}`); return r.status === 404 ? null : (await r.json()).sha; }
 async function getSite(){
-  // Unique query string + no-store prevents a stale cached SHA from being reused.
-  const r = await gh(`site.json?ref=${GH.branch}&_=${Date.now()}-${Math.random().toString(36).slice(2)}`, { cache:'no-store' });
+  const r = await gh(`site.json?ref=${GH.branch}`);
   if(r.status === 404) return { data: { defaultTheme: '', songs: [] }, sha: null };
   const j = await r.json();
   return { data: JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,''))))), sha: j.sha };
 }
-let siteSaveQueue = Promise.resolve();
+// saves run one at a time, and retry with a fresh copy if GitHub says the file changed
+let _siteQueue = Promise.resolve();
 function saveSite(change){
-  // Serialize every site.json write in this page so two clicks cannot race
-  // using the same SHA. Each queued write reads the latest SHA before writing.
-  const run = async () => {
-    for(let attempt = 0; attempt < 5; attempt++){
-      const { data, sha } = await getSite();
-      change(data);
+  const job = _siteQueue.then(async () => {
+    for(let attempt = 1; ; attempt++){
+      const { data, sha } = await getSite(); change(data);
       try{
-        const r = await gh('site.json', { method:'PUT', body: JSON.stringify({
-          message:'Update site.json', content:textB64(JSON.stringify(data, null, 2)),
-          branch:GH.branch, ...(sha ? {sha} : {})
-        }) });
-        if(!r.ok) throw new Error('GitHub could not save site.json.');
+        await gh('site.json', { method:'PUT', body: JSON.stringify({ message:'Update site.json', content: textB64(JSON.stringify(data, null, 2)), branch: GH.branch, ...(sha ? {sha} : {}) }) });
         return data;
       }catch(err){
-        const conflict = /does not match|sha.*match|409|422/i.test(err.message || '');
-        if(!conflict || attempt === 4) throw err;
-        await new Promise(resolve => setTimeout(resolve, 300 * (attempt + 1)));
+        if(attempt >= 4 || !/does not match|409|conflict/i.test(String(err.message))) throw err;
+        await new Promise(r => setTimeout(r, 1200 * attempt));
       }
     }
-    throw new Error('Could not save site.json after retrying. Please try again.');
-  };
-  const result = siteSaveQueue.then(run, run);
-  siteSaveQueue = result.catch(() => {});
-  return result;
+  });
+  _siteQueue = job.catch(() => {});
+  return job;
 }
 function needKey(){ if(getTok()) return false; $('mpTokBox').open = true; status('Add your GitHub key first (below).'); return true; }
 
@@ -1887,13 +1877,9 @@ if(isOwner){
 
   $('mpDefault').onclick = async () => {
     if(needKey()) return;
-    const btn = $('mpDefault');
-    if(btn.disabled) return;
-    btn.disabled = true;
     try{ status('Saving…'); await saveSite(d => { d.defaultTheme = themeKey; });
       status(`✓ "${T.label}" is now everyone's default (live in about a minute).`); }
     catch(e){ status('Save failed: ' + e.message); }
-    finally{ btn.disabled = false; }
   };
 }
 
