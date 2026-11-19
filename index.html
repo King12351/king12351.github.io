@@ -1767,9 +1767,25 @@ async function getSite(){
   return { data: JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,''))))), sha: j.sha };
 }
 async function saveSite(change){
-  const { data, sha } = await getSite(); change(data);
-  await gh('site.json', { method:'PUT', body: JSON.stringify({ message:'Update site.json', content: textB64(JSON.stringify(data, null, 2)), branch: GH.branch, ...(sha ? {sha} : {}) }) });
-  return data;
+  // Retry if another save changes site.json between our read and write.
+  // GitHub rejects stale blob SHAs; re-read the latest file and reapply the change.
+  for(let attempt = 0; attempt < 3; attempt++){
+    const { data, sha } = await getSite();
+    change(data);
+    try{
+      const r = await gh('site.json', { method:'PUT', body: JSON.stringify({
+        message:'Update site.json', content:textB64(JSON.stringify(data, null, 2)),
+        branch:GH.branch, ...(sha ? {sha} : {})
+      }) });
+      if(!r.ok) throw new Error('GitHub could not save site.json.');
+      return data;
+    }catch(err){
+      const conflict = /does not match|sha.*match|409|422/i.test(err.message || '');
+      if(!conflict || attempt === 2) throw err;
+      await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
+    }
+  }
+  throw new Error('Could not save site.json after retrying. Please try again.');
 }
 function needKey(){ if(getTok()) return false; $('mpTokBox').open = true; status('Add your GitHub key first (below).'); return true; }
 
