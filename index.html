@@ -51,7 +51,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #profile.tilting{transition:transform .15s ease-out}
 
 .nameRow{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:4px}
-.orn{width:42px;height:42px;flex:0 0 42px;filter:drop-shadow(0 0 8px var(--accent))}
+.orn{width:var(--ornSize,42px);height:var(--ornSize,42px);flex:0 0 var(--ornSize,42px);filter:drop-shadow(0 0 8px var(--accent))}
 .orn svg{width:100%;height:100%;display:block}
 .orn img{width:100%;height:100%;object-fit:contain;display:block}
 .nameRow{gap:22px}
@@ -221,7 +221,7 @@ body.customCursor,body.customCursor *{cursor:var(--cur) !important}
   .sicon{flex-basis:88px;width:88px;height:50px}
 
   .cards{grid-template-columns:1fr}
-  .orn{width:30px;height:30px;flex-basis:30px}
+  .orn{width:calc(var(--ornSize,42px)*.72);height:calc(var(--ornSize,42px)*.72);flex-basis:calc(var(--ornSize,42px)*.72)}
   #stage{align-items:flex-start;padding-top:80px}
   #chara{opacity:.3;max-width:75vw;right:-10vw}
   #chara.wide{width:90vw;right:-5vw}
@@ -453,6 +453,144 @@ body[data-theme=graffiti] .card,body[data-theme=graffiti] .player{border:2px sol
 .cornerBadge.wideBadge{width:min(24vw,320px);top:84px;animation:badgeFloat2 5s ease-in-out infinite}
 @keyframes badgeFloat2{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media(max-width:560px){ .cornerBadge.wideBadge{width:30vw;top:70px} }
+/* ---------- theme editor + effects ---------- */
+#fxCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;display:none}
+#editBtn{right:128px}
+.nameRow[data-orn=left] #ornR,.nameRow[data-orn=right] #ornL,.nameRow[data-orn=none] .orn,
+.nameRow[data-orn=above] #ornR,.nameRow[data-orn=below] #ornR{display:none}
+.nameRow[data-orn=above]{flex-direction:column;gap:2px}.nameRow[data-orn=below]{flex-direction:column-reverse;gap:2px}
+body.noSocOrn .socials .x{display:none}
+body.dragChar #chara{pointer-events:auto;z-index:6;cursor:move!important;outline:2px dashed var(--accent);outline-offset:4px;animation:none}
+#editPanel{position:fixed;top:70px;right:16px;bottom:16px;z-index:22;width:min(360px,94vw);display:none;flex-direction:column;
+  background:rgba(12,8,20,.94);border:1px solid rgba(255,255,255,.12);border-radius:14px;color:#eee;font-size:12.5px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+#editPanel.open{display:flex}
+#editPanel .epHead{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 6px;font-size:14px}
+#editPanel .epHead button{font-size:16px;opacity:.7}
+#editPanel .epTabs{display:flex;gap:3px;padding:0 10px 8px;flex-wrap:wrap}
+#editPanel .epTabs button{flex:1;padding:6px 4px;border-radius:8px;background:rgba(255,255,255,.06);font-size:11.5px;font-weight:700;white-space:nowrap}
+#editPanel .epTabs button.on{background:var(--accent);color:#111}
+#epBody{flex:1;overflow:auto;padding:4px 14px 10px}
+#epBody b{display:block;margin:8px 0 4px;font-size:13px}#epBody b i,#epBody p i{font-weight:400;color:#aaa}
+#epBody p{color:#aaa;margin:4px 0;line-height:1.45}
+#epBody hr{border:0;border-top:1px solid rgba(255,255,255,.1);margin:12px 0}
+#epBody code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;font-size:11px}
+.ef{display:flex;flex-direction:column;gap:4px;margin:8px 0}.ef>span{color:#ccc;font-size:11.5px}.ef>span i{color:#888;font-style:normal}
+#epBody input[type=text],#epBody textarea,#epBody select{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;padding:7px 9px;color:#fff;font:inherit;font-size:12.5px}
+#epBody select option{background:#1a1424}
+#epBody textarea{resize:vertical;min-height:70px;cursor:text!important}
+#epBody input[type=range]{width:100%;accent-color:var(--accent)}
+#epBody input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;align-self:flex-start}
+#epBody input[type=color]{width:42px;height:28px;border:1px solid rgba(255,255,255,.2);border-radius:6px;background:none;padding:1px}
+.pair{display:flex;gap:8px;align-items:center}.pair input[type=range]{flex:1}
+#epBody .wbtn,.epFoot button{display:block;width:100%;margin-top:6px;padding:8px;border-radius:8px;background:rgba(255,255,255,.1);font-size:12px;font-weight:700;text-align:center}
+#epBody .wbtn.go,.epFoot .go{background:var(--accent);color:#111}
+#epBody .wbtn.danger{background:rgba(255,70,70,.2);color:#ffb3b3}
+#epBody .upl{cursor:pointer}
+#epBody .link{color:var(--accent);font-size:11px;text-decoration:underline}
+.thumbs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.thumbs .th{position:relative;width:60px;height:72px;border-radius:8px;background:rgba(255,255,255,.06);display:grid;place-items:center;overflow:hidden}
+.thumbs img{max-width:100%;max-height:100%;object-fit:contain}
+.thumbs button{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.7);font-size:10px}
+img.mini{height:28px;vertical-align:middle;margin:0 4px}
+.ornGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:6px 0}
+.ornGrid button{aspect-ratio:1;border-radius:8px;background:rgba(255,255,255,.06);padding:5px}
+.ornGrid button.on{background:color-mix(in srgb,var(--accent) 45%,transparent);outline:1px solid var(--accent)}
+.ornGrid svg{width:100%;height:100%}
+.fx{border:1px solid rgba(255,255,255,.08);border-radius:9px;margin:6px 0;padding:6px 9px}
+.fx.on{border-color:color-mix(in srgb,var(--accent) 60%,transparent);background:rgba(255,255,255,.03)}
+.fxh{display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer}
+.epFoot{padding:8px 14px 12px;border-top:1px solid rgba(255,255,255,.1)}
+.epFoot .row{display:flex;gap:6px}.epFoot .row button{flex:1}
+#epStatus{display:block;color:#aaa;font-size:11.5px;min-height:15px}
+@media (max-width:560px){ #editPanel{top:auto;height:62vh;right:3vw;left:3vw;width:auto;bottom:10px} }
+#epBody input[type=password]{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:7px 9px;color:#fff;font:inherit;margin:4px 0}
+#epBody .pair .wbtn{flex:1}
+.decoLayer{position:fixed;inset:0;pointer-events:none;z-index:3}#decoFront{z-index:6}
+.deco{position:absolute}.deco .dIn{width:100%;height:100%;display:grid;place-items:center}
+.deco svg,.deco img{width:100%;height:100%;object-fit:contain;display:block}
+.deco .demoji{line-height:1;white-space:nowrap}
+.a-float{animation:dfloat 4s ease-in-out infinite}.a-float.r{animation-delay:-2s}
+.a-bounce{animation:dbounce 1.4s cubic-bezier(.3,0,.3,1) infinite}
+.a-orbit{animation:dorbit 8s linear infinite}
+.a-wobble{animation:dwobble 2s ease-in-out infinite}
+.a-glowpulse{animation:dglow 2s ease-in-out infinite}
+@keyframes dfloat{50%{transform:translateY(-18px)}}
+@keyframes dbounce{0%,100%{transform:translateY(0)}45%{transform:translateY(-30%)}55%{transform:translateY(-30%)}}
+@keyframes dorbit{from{transform:rotate(0) translateX(35%) rotate(0)}to{transform:rotate(360deg) translateX(35%) rotate(-360deg)}}
+@keyframes dwobble{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+@keyframes dglow{50%{opacity:.35;transform:scale(.9)}}
+body.decoEdit .decoLayer{z-index:7}body.decoEdit .deco{pointer-events:auto;cursor:move!important;outline:1px dashed rgba(255,255,255,.35);outline-offset:3px}
+body.decoEdit .deco.sel{outline:2px solid var(--accent)}
+.decoList{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.decoList button{width:46px;height:46px;border-radius:8px;background:rgba(255,255,255,.06);padding:6px;display:grid;place-items:center;font-size:22px}
+.decoList button.on{outline:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 30%,transparent)}
+.decoList svg,.decoList img{width:100%;height:100%;object-fit:contain}
+.ornGrid.add button{padding:6px}
+/* more decoration movements */
+.a-shake{animation:dshake .5s linear infinite}
+.a-heartbeat{animation:dheart 1.2s ease-in-out infinite}
+.a-swing{animation:dswing 2s ease-in-out infinite;transform-origin:50% -20%}
+.a-zoom{animation:dzoom 3s ease-in-out infinite}
+.a-jello{animation:djello 1.6s ease-in-out infinite}
+.a-tada{animation:dtada 2s ease-in-out infinite}
+.a-twinkle{animation:dtwinkle 2.4s ease-in-out infinite}
+.a-roll{animation:droll 6s ease-in-out infinite}
+.a-zigzag{animation:dzigzag 3s ease-in-out infinite}
+.a-blink{animation:dblink 1.5s steps(1) infinite}
+.a-drift{animation:ddrift 14s linear infinite}
+.a-fall{animation:dfall 8s linear infinite}
+.a-rise{animation:drise 8s linear infinite}
+@keyframes dshake{0%,100%{transform:translate(0,0)}20%{transform:translate(-4px,2px)}40%{transform:translate(4px,-2px)}60%{transform:translate(-3px,-3px)}80%{transform:translate(3px,3px)}}
+@keyframes dheart{0%,40%,100%{transform:scale(1)}10%,30%{transform:scale(1.25)}20%{transform:scale(1.05)}}
+@keyframes dswing{0%,100%{transform:rotate(-25deg)}50%{transform:rotate(25deg)}}
+@keyframes dzoom{50%{transform:scale(1.6)}}
+@keyframes djello{0%,100%{transform:scale(1,1)}30%{transform:scale(1.25,.75)}40%{transform:scale(.75,1.25)}50%{transform:scale(1.15,.85)}65%{transform:scale(.95,1.05)}75%{transform:scale(1.05,.95)}}
+@keyframes dtada{0%,60%,100%{transform:scale(1) rotate(0)}10%,20%{transform:scale(.9) rotate(-4deg)}30%,50%{transform:scale(1.15) rotate(5deg)}40%{transform:scale(1.15) rotate(-5deg)}}
+@keyframes dtwinkle{0%,100%{transform:scale(.5) rotate(0);opacity:.2}50%{transform:scale(1.1) rotate(45deg);opacity:1}}
+@keyframes droll{0%,100%{transform:translateX(-120%) rotate(-360deg)}50%{transform:translateX(120%) rotate(360deg)}}
+@keyframes dzigzag{0%,100%{transform:translate(0,0)}25%{transform:translate(40%,-30%)}50%{transform:translate(80%,0)}75%{transform:translate(40%,30%)}}
+@keyframes dblink{50%{opacity:0}}
+@keyframes ddrift{from{transform:translateX(-70vw)}to{transform:translateX(70vw)}}
+@keyframes dfall{from{transform:translateY(-110vh) rotate(0)}to{transform:translateY(110vh) rotate(360deg)}}
+@keyframes drise{from{transform:translateY(110vh)}to{transform:translateY(-110vh)}}
+/* extra effects layered on top */
+.x-rainbow{animation:xrain 3s linear infinite}
+.x-flicker{animation:xflick 3s steps(1) infinite}
+.x-pulseglow{animation:xglow 1.8s ease-in-out infinite}
+.x-shimmer{animation:xshim 2.2s ease-in-out infinite}
+.x-ghost{animation:xghost 3s ease-in-out infinite}
+.x-blur{animation:xblur 3s ease-in-out infinite}
+.x-gray{filter:grayscale(1)}
+.x-invert{filter:invert(1) hue-rotate(180deg)}
+@keyframes xrain{to{filter:hue-rotate(360deg) saturate(1.6)}}
+@keyframes xflick{0%,18%,22%,25%,53%,57%,100%{opacity:1}20%,24%,55%{opacity:.15}}
+@keyframes xglow{50%{filter:drop-shadow(0 0 14px var(--accent)) drop-shadow(0 0 28px var(--accent)) brightness(1.3)}}
+@keyframes xshim{50%{filter:brightness(1.8) contrast(1.1)}}
+@keyframes xghost{50%{opacity:.25;filter:blur(1px)}}
+@keyframes xblur{50%{filter:blur(4px)}}
+.deco .dFx{width:100%;height:100%}
+.deco{transition:translate .25s ease-out,scale .3s,opacity .3s}
+.deco.popped{scale:0;opacity:0}
+/* character idle styles + tap bubble */
+#chara{transform-origin:50% 100%}
+#chara.idle-none{animation:none!important}
+#chara.idle-breathe{animation:cbreathe 4s ease-in-out infinite!important}
+#chara.idle-sway{animation:csway 5s ease-in-out infinite!important}
+#chara.idle-bob{animation:cbob 1.6s ease-in-out infinite!important}
+@keyframes cbreathe{50%{transform:scale(1.025,1.035)}}
+@keyframes csway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+@keyframes cbob{50%{transform:translateY(-10px)}}
+.tapBubble{position:fixed;z-index:65;pointer-events:none;background:#fff;color:#111;font:700 14px/1.3 system-ui,sans-serif;padding:8px 12px;border-radius:14px;
+  max-width:240px;transform:translate(-50%,-100%) scale(.6);opacity:0;transition:transform .25s cubic-bezier(.3,1.6,.5,1),opacity .2s;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.tapBubble::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:#fff}
+.tapBubble.on{transform:translate(-50%,-100%) scale(1);opacity:1}
+.tapBurst{position:fixed;z-index:64;pointer-events:none;font-size:20px;transition:transform .9s cubic-bezier(.2,.8,.3,1),opacity .9s}
+.cover[data-shape=rounded]{border-radius:14px!important}.cover[data-shape=square]{border-radius:3px!important}
+.cover.nospin{animation:none!important}
+.card.clickable{cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
+.card.clickable:hover{border-color:var(--accent);box-shadow:0 6px 22px color-mix(in srgb,var(--accent) 30%,transparent)}
 </style>
 
 </head>
@@ -504,6 +642,7 @@ body[data-theme=graffiti] .card,body[data-theme=graffiti] .player{border:2px sol
 <video id="bgVideo" autoplay muted loop playsinline></video>
 <img id="bgImage" alt="">
 <div class="vignette"></div>
+<canvas id="fxCanvas"></canvas>
 <img id="chara" alt="">
 <img id="cornerL" class="cornerBadge l" alt=""><img id="cornerR" class="cornerBadge r" alt="">
 
@@ -518,6 +657,15 @@ body[data-theme=graffiti] .card,body[data-theme=graffiti] .player{border:2px sol
 <button id="musicBtn" class="cornerBtn" aria-label="Manage music" title="Manage music" style="display:none">
   <svg viewBox="0 0 24 24"><path d="M12 3v10.6A4 4 0 1014 17V7h4V3z"/></svg>
 </button>
+<button id="editBtn" class="cornerBtn" aria-label="Edit theme" title="Edit this theme" style="display:none">
+  <svg viewBox="0 0 24 24"><path d="M3 17.3V21h3.7L17.8 9.9l-3.7-3.7zM20.7 7a1 1 0 000-1.4l-2.3-2.3a1 1 0 00-1.4 0l-1.8 1.8 3.7 3.7z"/></svg>
+</button>
+<div id="editPanel">
+  <div class="epHead"><b>✏️ Editing: <span id="epTheme"></span></b><button id="epClose" aria-label="Close">✕</button></div>
+  <div class="epTabs"><button data-tab="text" class="on">Text</button><button data-tab="look">Look</button><button data-tab="pictures">Pictures</button><button data-tab="icons">Icons</button><button data-tab="decor">Decor</button><button data-tab="effects">Effects</button><button data-tab="theme">Theme</button></div>
+  <div id="epBody"></div>
+  <div class="epFoot"><span id="epStatus"></span><div class="row"><button id="epUndo">↩ Undo changes</button><button id="epSave" class="go">💾 Save for everyone</button></div></div>
+</div>
 <div id="musicPanel">
   <h3>🎵 Your music</h3>
   <div id="mpList"></div>
@@ -613,6 +761,7 @@ const CONFIG = {
 
   // Your GitHub site (used by the hidden music uploader)
   github: { owner: "king12351", repo: "king12351.github.io", branch: "main" },
+  editDir: "assets/edits/",   // where pictures uploaded in the ✏️ editor go
 
   characterSwapSeconds: 15,
   themes: {
@@ -641,7 +790,7 @@ const CONFIG = {
   // User ID: Discord > Settings > Advanced > Developer Mode, then right-click
   // yourself > Copy User ID. Join discord.gg/lanyard once; live updates use its WebSocket.
   discordUserId: "332710813632692225",
-  discordInvite: "K2QCYwWycX",   // the code after discord.gg/
+  discordInvite: "ZbC7czVrPV",   // the code after discord.gg/
   fallbackUser:   { name: "king1235111", status: "online", note: "currently doing nothing", custom: "currently doing nothing",
                     avatar: "https://cdn.discordapp.com/avatars/332710813632692225/103d4c6b73181ffdf77042ec47f29a54.webp?size=256" },
   fallbackServer: { name: "Misfits", online: 0, members: 0 },
@@ -894,7 +1043,7 @@ function loadSongAt(i){
   if(!songs.length) return;
   idx = (i + songs.length) % songs.length; const s = songs[idx];
   audio.src = s.src; $('pTitle').textContent = s.title || 'untitled'; $('pArtist').textContent = s.artist || '—';
-  $('pCover').innerHTML = s.cover ? `<img src="${s.cover}" alt="">` : '♪';
+  if(window._edReady) refreshCover(); else $('pCover').innerHTML = s.cover ? `<img src="${s.cover}" alt="">` : '♪';
 }
 const setPlayIcon = () => { $('pPlay').innerHTML = audio.paused ? PLAY : PAUSE; $('pCover').classList.toggle('spin', !audio.paused); };
 const play = () => { if(songs.length) audio.play().catch(()=>{}); };
@@ -1616,32 +1765,364 @@ Object.assign(SCENES, {
 
 /* ---------- scene engine ---------- */
 const cv = $('bgCanvas'), ctx = cv.getContext('2d');
-let W, H, back, front, sceneState, dpr = Math.min(devicePixelRatio||1, 2), useCanvas = true;
+let sceneBuilt, W, H, back, front, sceneState, dpr = Math.min(devicePixelRatio||1, 2), useCanvas = true;
 function layer(){ const l=document.createElement('canvas'); l.width=W*dpr; l.height=H*dpr; const g=l.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); return [l,g]; }
 function buildScene(){
   W = innerWidth; H = innerHeight;
   cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
   let bg, fg; [back,bg] = layer(); [front,fg] = layer();
-  sceneState = SCENES[themeKey].build(bg, fg, W, H);
+  sceneBuilt = sceneOf(themeKey); sceneState = SCENES[sceneBuilt].build(bg, fg, W, H);
 }
 function loop(time){
   if(useCanvas && sceneState){
-    const t = time/1000, S = SCENES[themeKey];
+    const t = time/1000, S = SCENES[sceneBuilt];
     ctx.drawImage(back,0,0,W,H); S.mid(ctx,W,H,t,sceneState);
     ctx.drawImage(front,0,0,W,H); S.top(ctx,W,H,t,sceneState);
   }
+  drawFX(time/1000);
   requestAnimationFrame(loop);
 }
 addEventListener('resize', () => { if(useCanvas) buildScene(); });
 
+/* =====================================================================
+   THEME EDITS — made with the ✏️ editor (#owner) and saved in site.json
+   (themeEdits = changes per theme, customThemes = your own copies)
+   ===================================================================== */
+const BASE_T = JSON.parse(JSON.stringify(THEMES));
+const BASE_C = JSON.parse(JSON.stringify(CONFIG.themes));
+let EDITS = {}, CUSTOM = {};
+const PREVIEW = {};                                   // just-uploaded files, shown before GitHub publishes them
+const asset = p => (p && PREVIEW[p]) || p;
+const T_FIELDS = ['label','tab','accent','accent2','text','muted','card','line','icon','title','grad','orn','anim','splash','splashSub','subtitle','bios','sparks'];
+const C_FIELDS = ['character','side','ornament','cursor','cursorHotspot','background','logo'];
+const baseOf = k => (CUSTOM[k] && CUSTOM[k].base) || k;
+function sceneOf(k){ const s = (EDITS[k] || {}).scene || baseOf(k); return SCENES[s] ? s : Object.keys(SCENES)[0]; }
+function rebuildTheme(k){
+  const b = baseOf(k), e = EDITS[k] || {};
+  if(!BASE_T[b]) return false;
+  const t = { ...BASE_T[b] };
+  if(CUSTOM[k]) t.label = CUSTOM[k].label || t.label;
+  for(const f of T_FIELDS) if(f in e && !(Array.isArray(e[f]) && !e[f].length)) t[f] = e[f];
+  THEMES[k] = t;
+  const c = { side: 'right', ...(BASE_C[b] || {}) };
+  for(const f of C_FIELDS) if(f in e) c[f] = e[f];
+  CONFIG.themes[k] = c;
+  if(CUSTOM[k] && typeof CURSORS !== 'undefined' && !CURSORS[k] && CURSORS[b]) CURSORS[k] = CURSORS[b];
+  return true;
+}
+function loadEdits(d){
+  EDITS = d.themeEdits || {}; CUSTOM = d.customThemes || {};
+  for(const k of new Set([...Object.keys(CUSTOM), ...Object.keys(EDITS)])) rebuildTheme(k);
+  buildThemeMenu();
+}
+const _fonts = new Set();
+function loadFont(css){
+  const m = /'([^']+)'/.exec(css || ''); if(!m || _fonts.has(m[1])) return; _fonts.add(m[1]);
+  if(document.querySelector(`link[href*="${m[1].replace(/ /g,'+')}"]`)) return;
+  const l = document.createElement('link'); l.rel = 'stylesheet';
+  l.href = `https://fonts.googleapis.com/css2?family=${m[1].replace(/ /g,'+')}&display=swap`; document.head.appendChild(l);
+}
+// the bits of a theme that don't need the whole page redrawn
+function applyExtras(key){
+  const e = EDITS[key] || {}, ch = $('chara');
+  const nm = $('name');
+  if(e.nameText){ if(nm._orig == null) nm._orig = nm.innerHTML; nm.textContent = e.nameText; }
+  else if(nm._orig != null){ nm.innerHTML = nm._orig; nm._orig = null; }
+  loadFont(T.title);
+  if(e.charX != null){
+    Object.assign(ch.style, { left: e.charX + 'vw', right: 'auto', bottom: (e.charY || 0) + 'vh', height: (e.charH || 70) + 'vh', width: 'auto', maxWidth: 'none', translate: '-50% 0' });
+  } else ['left','right','bottom','height','width','maxWidth','translate'].forEach(p => ch.style[p] = '');
+  ch.style.scale = e.charFlip ? '-1 1' : '';
+  ch.style.opacity = e.charFade != null ? e.charFade : '';
+  const nr = document.querySelector('.nameRow'); nr.dataset.orn = e.ornPlace || 'both';
+  document.documentElement.style.setProperty('--ornSize', e.ornSize ? e.ornSize + 'px' : '42px');
+  ['ornL','ornR','sx1','sx2'].forEach(id => $(id).style.animationDuration = e.ornSpeed ? e.ornSpeed + 's' : '');
+  document.body.classList.toggle('noSocOrn', e.ornSocials === false);
+  setFX(e.effects || {});
+  renderDecos(e.decos); applyLook(e.look);
+  if(typeof applyCharMotion === 'function') applyCharMotion(e);
+  refreshCover();
+}
+
+/* ---------- extra effects layer (snow, rain, petals …) ---------- */
+const FX_LIST = { snow:'❄️ Snow', rain:'🌧️ Rain', petals:'🌸 Petals', leaves:'🍂 Leaves', embers:'🔥 Embers', sparkles:'✨ Sparkles',
+  stars:'⭐ Shooting stars', bubbles:'🫧 Bubbles', hearts:'💗 Hearts', confetti:'🎉 Confetti', fireflies:'🪲 Fireflies', fog:'🌫️ Fog', glow:'💡 Edge glow', floater:'🖼️ Floating picture' };
+const FX_COL = { snow:'#ffffff', rain:'#a9c8ff', petals:'#ffb7d5', leaves:'#e0782c', embers:'#ff8a2a', bubbles:'#ffffff', fireflies:'#fff38a', fog:'#ffffff', stars:'#ffffff' };
+const FX_MAX = { snow:320, rain:420, petals:120, leaves:90, embers:160, sparkles:130, stars:6, bubbles:80, hearts:60, confetti:220, fireflies:70 };
+const fxc = $('fxCanvas'), fctx = fxc.getContext('2d');
+let fxCfg = {}, fxP = {}, fxImg = null, fxOn = false;
+function sizeFX(){ fxc.width = innerWidth * dpr; fxc.height = innerHeight * dpr; fctx.setTransform(dpr,0,0,dpr,0,0); }
+addEventListener('resize', sizeFX); sizeFX();
+function setFX(cfg){
+  fxCfg = cfg || {}; fxP = {};
+  const fl = fxCfg.floater; fxImg = null;
+  if(fl && fl.on && fl.img){ fxImg = new Image(); fxImg.src = asset(fl.img); }
+  fxOn = Object.values(fxCfg).some(v => v && v.on);
+  fxc.style.display = fxOn ? 'block' : 'none';
+  if(!fxOn) fctx.clearRect(0, 0, innerWidth, innerHeight);
+}
+function fxNew(k, W, H, any){
+  const y0 = any ? R()*H : -20, p = { x: R()*W, y: y0, ph: R()*TAU, r: R()*TAU };
+  switch(k){
+    case 'snow': return { ...p, s: rr(1,3.6), v: rr(.5,1.5) };
+    case 'rain': return { ...p, s: rr(10,22), v: rr(9,15) };
+    case 'petals': case 'leaves': return { ...p, s: rr(5,10), v: rr(.6,1.6), vr: rr(-.04,.04) };
+    case 'confetti': return { ...p, s: rr(4,8), v: rr(1.5,3.2), vr: rr(-.15,.15), c: R()*3|0 };
+    case 'embers': case 'bubbles': case 'hearts': return { ...p, y: any ? R()*H : H + 20, s: k==='hearts' ? rr(12,22) : k==='bubbles' ? rr(3,9) : rr(1,3), v: rr(.5,1.6) };
+    case 'sparkles': case 'fireflies': return { ...p, y: R()*H, s: rr(2,5), v: rr(.3,1), life: R() };
+    case 'stars': return { x: rr(0,W*1.2), y: rr(-H*.2,H*.4), l: any ? 0 : 1, s: rr(80,160), v: rr(8,14), wait: any ? rr(0,6) : rr(1,8) };
+  }
+  return p;
+}
+function drawFX(t){
+  if(!fxOn) return;
+  const W = innerWidth, H = innerHeight, c = fctx; c.clearRect(0, 0, W, H);
+  for(const [k, cf] of Object.entries(fxCfg)){
+    if(!cf || !cf.on) continue;
+    const amt = cf.amt ?? 50, spd = cf.spd ?? 1, col = cf.color || FX_COL[k] || T.accent;
+    if(k === 'glow'){
+      const a = (.12 + .1*Math.sin(t*2*spd)) * (amt/50), m = Math.min(W,H)*.22;
+      [[0,0,0,m],[0,H,0,H-m],[0,0,m,0],[W,0,W-m,0]].forEach(([x1,y1,x2,y2]) => { const g = c.createLinearGradient(x1,y1,x2,y2);
+        g.addColorStop(0, hexA(col, a)); g.addColorStop(1, hexA(col, 0)); c.fillStyle = g; c.fillRect(0,0,W,H); });
+      continue;
+    }
+    if(k === 'fog'){
+      const arr = fxP.fog ||= Array.from({length:9}, () => ({ x: R()*W, y: rr(H*.35,H), r: rr(180,340), v: rr(-.3,.3) }));
+      for(const f of arr){ f.x += f.v*spd; if(f.x < -f.r) f.x = W + f.r; if(f.x > W + f.r) f.x = -f.r;
+        const g = c.createRadialGradient(f.x,f.y,0,f.x,f.y,f.r); g.addColorStop(0, hexA(col, .1*amt/50)); g.addColorStop(1, hexA(col,0));
+        c.fillStyle = g; c.fillRect(f.x-f.r, f.y-f.r, f.r*2, f.r*2); }
+      continue;
+    }
+    if(k === 'floater'){
+      if(!fxImg || !fxImg.complete || !fxImg.naturalWidth) continue;
+      const n = Math.max(1, Math.min(3, cf.count || 1));
+      for(let i = 0; i < n; i++){
+        const sz = 40 + amt*2.6, ar = fxImg.naturalHeight/fxImg.naturalWidth, tt = t*spd*.35 + i*2.1;
+        const x = W/2 + Math.sin(tt*1.3 + i) * W*.42, y = H/2 + Math.sin(tt*.9 + i*1.7) * H*.36;
+        c.save(); c.translate(x, y); c.rotate(Math.sin(tt*2)*.25); c.drawImage(fxImg, -sz/2, -sz*ar/2, sz, sz*ar); c.restore();
+      }
+      continue;
+    }
+    const arr = fxP[k] ||= [], want = Math.round(amt/100 * (FX_MAX[k] || 100));
+    while(arr.length < want) arr.push(fxNew(k, W, H, true));
+    if(arr.length > want) arr.length = want;
+    for(let i = 0; i < arr.length; i++){
+      const p = arr[i];
+      switch(k){
+        case 'snow': p.y += p.v*spd; p.x += Math.sin(t + p.ph)*.4; c.fillStyle = hexA(col,.85); c.beginPath(); c.arc(p.x,p.y,p.s,0,TAU); c.fill(); break;
+        case 'rain': p.y += p.v*spd; p.x -= p.v*spd*.18; c.strokeStyle = hexA(col,.45); c.lineWidth = 1.2; c.beginPath(); c.moveTo(p.x,p.y); c.lineTo(p.x+p.s*.18,p.y-p.s); c.stroke(); break;
+        case 'petals': case 'leaves': p.y += p.v*spd; p.x += Math.sin(t*1.3 + p.ph)*.9; p.r += p.vr*spd;
+          c.save(); c.translate(p.x,p.y); c.rotate(p.r); c.fillStyle = hexA(col,.85); c.beginPath();
+          if(k === 'petals') c.ellipse(0,0,p.s,p.s*.55,0,0,TAU); else { c.moveTo(0,-p.s); c.quadraticCurveTo(p.s*.8,0,0,p.s); c.quadraticCurveTo(-p.s*.8,0,0,-p.s); }
+          c.fill(); c.restore(); break;
+        case 'confetti': p.y += p.v*spd; p.x += Math.sin(t*2 + p.ph)*.6; p.r += p.vr*spd;
+          c.save(); c.translate(p.x,p.y); c.rotate(p.r); c.fillStyle = cf.color || [T.accent, T.accent2, '#ffffff'][p.c]; c.fillRect(-p.s/2,-p.s/4,p.s,p.s/2); c.restore(); break;
+        case 'embers': p.y -= p.v*spd*1.4; p.x += Math.sin(t*2 + p.ph)*.5; c.fillStyle = hexA(col, .5 + .5*Math.sin(t*8 + p.ph)); c.beginPath(); c.arc(p.x,p.y,p.s,0,TAU); c.fill(); break;
+        case 'bubbles': p.y -= p.v*spd; p.x += Math.sin(t + p.ph)*.5; c.strokeStyle = hexA(col,.55); c.lineWidth = 1.2; c.beginPath(); c.arc(p.x,p.y,p.s,0,TAU); c.stroke();
+          c.fillStyle = hexA(col,.35); c.beginPath(); c.arc(p.x-p.s*.35,p.y-p.s*.35,p.s*.25,0,TAU); c.fill(); break;
+        case 'hearts': p.y -= p.v*spd*.8; p.x += Math.sin(t + p.ph)*.6; c.globalAlpha = Math.max(0, Math.min(1, p.y/H*1.5)); c.fillStyle = col; c.font = p.s + 'px serif'; c.fillText('♥', p.x, p.y); c.globalAlpha = 1; break;
+        case 'sparkles': { p.life += .006*spd; if(p.life > 1){ Object.assign(p, fxNew(k,W,H,true)); p.life = 0; }
+          const a = Math.sin(p.life*Math.PI), s = p.s*(.6 + a); c.fillStyle = hexA(col, a);
+          c.beginPath(); c.moveTo(p.x, p.y-s*2); c.quadraticCurveTo(p.x, p.y, p.x+s*2, p.y); c.quadraticCurveTo(p.x, p.y, p.x, p.y+s*2); c.quadraticCurveTo(p.x, p.y, p.x-s*2, p.y); c.quadraticCurveTo(p.x, p.y, p.x, p.y-s*2); c.fill(); break; }
+        case 'fireflies': { p.x += Math.cos(t*.7 + p.ph)*.5*spd; p.y += Math.sin(t*.9 + p.ph*1.3)*.4*spd; const a = .3 + .7*Math.abs(Math.sin(t*1.5 + p.ph));
+          const g = c.createRadialGradient(p.x,p.y,0,p.x,p.y,p.s*3); g.addColorStop(0, hexA(col,a)); g.addColorStop(1, hexA(col,0)); c.fillStyle = g; c.fillRect(p.x-p.s*3,p.y-p.s*3,p.s*6,p.s*6); break; }
+        case 'stars': if(p.wait > 0){ p.wait -= 1/60*spd; break; }
+          p.x -= p.v*spd; p.y += p.v*spd*.45; p.l -= .012*spd;
+          { const g = c.createLinearGradient(p.x,p.y,p.x+p.s,p.y-p.s*.45); g.addColorStop(0, hexA(col,Math.max(0,p.l))); g.addColorStop(1, hexA(col,0));
+            c.strokeStyle = g; c.lineWidth = 2; c.beginPath(); c.moveTo(p.x,p.y); c.lineTo(p.x+p.s,p.y-p.s*.45); c.stroke(); }
+          if(p.l <= 0) Object.assign(p, fxNew(k,W,H,false)); break;
+      }
+      if(k !== 'stars' && k !== 'sparkles' && k !== 'fireflies' && (p.y > H + 30 || p.y < -40 || p.x < -40 || p.x > W + 40)) arr[i] = fxNew(k, W, H, false);
+      if(k === 'fireflies' && (p.x < -20 || p.x > W+20 || p.y < -20 || p.y > H+20)) arr[i] = fxNew(k, W, H, true);
+    }
+  }
+}
+function hexA(h, a){
+  if(!h || h[0] !== '#') return h;
+  let x = h.slice(1); if(x.length === 3) x = [...x].map(c => c + c).join('');
+  const n = parseInt(x.slice(0,6), 16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${Math.max(0,Math.min(1,a))})`;
+}
+
+/* ---------- decorations (any number of spinning/moving things, placed anywhere) + extra style ---------- */
+const decoBack = document.createElement('div'), decoFront = document.createElement('div');
+decoBack.id = 'decoBack'; decoFront.id = 'decoFront'; decoBack.className = decoFront.className = 'decoLayer';
+document.body.append(decoBack, decoFront);
+const edStyle = document.createElement('style'); edStyle.id = 'edStyle'; document.head.appendChild(edStyle);
+function decoInner(d){
+  if(d.kind === 'img') return `<img src="${asset(d.v)}" alt="" draggable="false">`;
+  if(d.kind === 'emoji') return `<span class="demoji">${String(d.v || '✦').replace(/</g,'&lt;')}</span>`;
+  return orn(d.v || 'star');
+}
+function renderDecos(list){
+  decoBack.innerHTML = ''; decoFront.innerHTML = '';
+  (list || []).forEach((d, i) => {
+    const el = document.createElement('div'); el.className = 'deco'; el.dataset.i = i;
+    el.style.cssText = `left:${d.x ?? 50}%;top:${d.y ?? 50}%;width:${d.size || 60}px;height:${d.size || 60}px;opacity:${d.op ?? 1};` +
+      `transform:translate(-50%,-50%) rotate(${d.rot || 0}deg) scaleX(${d.flip ? -1 : 1});` +
+      (d.glow ? `filter:drop-shadow(0 0 ${Math.round((d.size || 60)/5)}px ${d.glowCol || 'var(--accent)'});` : '') +
+      (d.kind === 'emoji' ? `font-size:${Math.round((d.size || 60)*.8)}px;color:${d.color || 'var(--text)'};` : '');
+    el.innerHTML = `<div class="dFx ${d.fx2 ? 'x-' + d.fx2 : ''}" style="${d.fx2 ? `animation-duration:${d.fx2spd || 3}s` : ''}"><div class="dIn ${d.anim ?? 'a-spin'}${d.rev ? ' r' : ''}" style="animation-duration:${d.speed || 6}s;${d.rev ? 'animation-direction:reverse' : ''}">${decoInner(d)}</div></div>`;
+    el._d = d; el._ox = 0; el._oy = 0;
+    (d.front ? decoFront : decoBack).appendChild(el);
+  });
+}
+function applyLook(L){
+  L = L || {}; let css = '';
+  if(L.radius != null) css += `.card,.player{border-radius:${L.radius}px!important}`;
+  if(L.blur != null) css += `.card,.player{backdrop-filter:blur(${L.blur}px);-webkit-backdrop-filter:blur(${L.blur}px)}`;
+  if(L.nameScale && L.nameScale != 1) css += `#name{zoom:${L.nameScale}}`;
+  if(L.spacing != null) css += `#name{letter-spacing:${L.spacing}px!important}`;
+  if(L.upper) css += `#name{text-transform:uppercase!important}`;
+  if(L.outline) css += `#name{-webkit-text-stroke:${L.outline}px ${L.outlineCol || '#000'}}`;
+  if(L.nameGlow) css += `#name{filter:drop-shadow(0 0 ${L.nameGlow}px ${L.nameGlowCol || 'var(--accent)'})!important}`;
+  if(L.bodyFont) css += `#profile .bio,#profile .jp,#profile .card,#profile .player,.socials{font-family:${L.bodyFont}!important}`;
+  if(L.vignette != null) css += `.vignette{opacity:${L.vignette}}`;
+  if(L.bright != null && L.bright != 1) css += `#bgCanvas,#bgVideo,#bgImage{filter:brightness(${L.bright})}`;
+  if(L.charGlow != null) css += `#chara{filter:${L.charGlow ? `drop-shadow(0 0 ${L.charGlow}px ${L.charGlowCol || 'color-mix(in srgb,var(--accent) 55%,transparent)'})` : 'none'}!important}`;
+  if(L.cardShadow) css += `.card,.player{box-shadow:0 0 ${L.cardShadow}px color-mix(in srgb,var(--accent) 45%,transparent)}`;
+  edStyle.textContent = css;
+  if(L.bodyFont) loadFont(L.bodyFont);
+}
+
+/* decorations that react to the mouse / finger: follow, run away, pop, look, depth */
+let mX = -9999, mY = -9999;
+addEventListener('pointermove', e => { mX = e.clientX; mY = e.clientY; }, { passive: true });
+addEventListener('touchmove', e => { const t = e.touches[0]; if(t){ mX = t.clientX; mY = t.clientY; } }, { passive: true });
+addEventListener('pointerdown', e => {
+  if(document.body.classList.contains('decoEdit')) return;
+  document.querySelectorAll('.deco').forEach(el => { const d = el._d; if(!d || d.react !== 'pop' || el.classList.contains('popped')) return;
+    const r = el.getBoundingClientRect(), cx = r.left + r.width/2, cy = r.top + r.height/2;
+    if(Math.hypot(e.clientX - cx, e.clientY - cy) < Math.max(30, r.width*.6)){
+      el.classList.add('popped'); if(typeof spark === 'function') for(let i = 0; i < 14; i++) spark(cx, cy, true);
+      setTimeout(() => el.classList.remove('popped'), 1600); } });
+});
+function decoReact(){
+  const editing = document.body.classList.contains('decoEdit');
+  document.querySelectorAll('.deco').forEach(el => {
+    const d = el._d; if(!d || !d.react || editing){ if(el._ox || el._oy){ el._ox = el._oy = 0; el.style.translate = ''; el.style.rotate = ''; } return; }
+    const W2 = innerWidth, H2 = innerHeight, hx = (d.x ?? 50)/100*W2, hy = (d.y ?? 50)/100*H2;
+    let tx = 0, ty = 0;
+    if(d.react === 'follow' && mX > -999){ tx = (mX - hx) * .9; ty = (mY - hy) * .9; const k = .06; el._ox += (tx - el._ox)*k; el._oy += (ty - el._oy)*k; }
+    else if(d.react === 'flee'){ const cx = hx + el._ox, cy = hy + el._oy, dx = cx - mX, dy = cy - mY, dist = Math.hypot(dx, dy), R0 = 140;
+      if(dist < R0 && dist > 0){ el._ox += dx/dist*(R0 - dist)*.25; el._oy += dy/dist*(R0 - dist)*.25; } else { el._ox *= .96; el._oy *= .96; } }
+    else if(d.react === 'depth' && mX > -999){ const f = (d.size || 60)/60*.03; el._ox += ((W2/2 - mX)*f - el._ox)*.08; el._oy += ((H2/2 - mY)*f - el._oy)*.08; }
+    else if(d.react === 'look' && mX > -999){ el.style.rotate = (Math.atan2(mY - hy, mX - hx)*180/Math.PI + 90) + 'deg'; return; }
+    el.style.translate = `${el._ox.toFixed(1)}px ${el._oy.toFixed(1)}px`;
+  });
+  requestAnimationFrame(decoReact);
+}
+requestAnimationFrame(decoReact);
+
+/* ---------- tap reactions for the character + decoration pictures ---------- */
+const TAP_FX = {
+  nod:    ['none', 'perspective(800px) rotateX(28deg)', 'none'],
+  back:   ['none', 'perspective(800px) rotateX(-22deg)', 'none'],
+  jump:   ['none', 'translateY(-14%)', 'translateY(2%)', 'none'],
+  spin:   ['rotate(0)', 'rotate(360deg)'],
+  flip:   ['perspective(800px) rotateY(0)', 'perspective(800px) rotateY(360deg)'],
+  shake:  ['none', 'translateX(-5%)', 'translateX(5%)', 'translateX(-4%)', 'translateX(3%)', 'none'],
+  squish: ['none', 'scale(1.18,.82)', 'scale(.92,1.08)', 'none'],
+  wiggle: ['none', 'rotate(-9deg)', 'rotate(8deg)', 'rotate(-5deg)', 'rotate(3deg)', 'none'],
+  grow:   ['none', 'scale(1.18)', 'none'],
+};
+function tapAnim(el, kind, add){
+  const f = TAP_FX[kind]; if(!f || !el.animate) return;
+  el.animate(f.map(t => ({ transform: t })), { duration: kind === 'spin' || kind === 'flip' ? 800 : 650, easing: 'cubic-bezier(.3,.9,.4,1)', composite: add ? 'add' : 'replace' });
+}
+const BURST_SYM = { sparkles: ['✦','✧','·'], hearts: ['♥','💖','💕'], stars: ['⭐','✨','🌟'] };
+function tapBurst(x, y, kind, custom){
+  const syms = kind === 'custom' ? [...(custom || '✦')] : (BURST_SYM[kind] || BURST_SYM.sparkles);
+  for(let i = 0; i < 12; i++){
+    const s = document.createElement('span'); s.className = 'tapBurst'; s.textContent = syms[i % syms.length];
+    s.style.left = x + 'px'; s.style.top = y + 'px'; s.style.color = 'var(--accent)'; document.body.appendChild(s);
+    const a = Math.random()*TAU, d = 50 + Math.random()*70;
+    requestAnimationFrame(() => { s.style.transform = `translate(${Math.cos(a)*d}px,${Math.sin(a)*d - 30}px) scale(${.6 + Math.random()*.8}) rotate(${Math.random()*180}deg)`; s.style.opacity = '0'; });
+    setTimeout(() => s.remove(), 950);
+  }
+}
+let _bubble, _bubbleT;
+function tapSay(x, y, lines, idxHolder){
+  const L = (lines || []).filter(Boolean); if(!L.length) return;
+  idxHolder.i = ((idxHolder.i ?? -1) + 1) % L.length;
+  if(!_bubble){ _bubble = document.createElement('div'); _bubble.className = 'tapBubble'; document.body.appendChild(_bubble); }
+  _bubble.textContent = L[idxHolder.i]; _bubble.style.left = Math.max(130, Math.min(innerWidth - 130, x)) + 'px'; _bubble.style.top = Math.max(60, y) + 'px';
+  _bubble.classList.remove('on'); void _bubble.offsetWidth; _bubble.classList.add('on');
+  clearTimeout(_bubbleT); _bubbleT = setTimeout(() => _bubble.classList.remove('on'), 2600);
+}
+const _sayIdx = {};
+function tappable(e){
+  const sp = document.getElementById('splash');
+  return !e.target.closest('#editPanel,#musicPanel,#themeMenu,.cornerBtn,.card,.player,a,button,input,select,textarea') && (!sp || sp.classList.contains('gone'));
+}
+addEventListener('pointerdown', e => {
+  if(!tappable(e) || document.body.classList.contains('decoEdit') || document.body.classList.contains('dragChar')) return;
+  const ed = EDITS[themeKey] || {}, ch = $('chara');
+  // character
+  if(ch.style.display !== 'none' && (ed.charTap || ed.charTapBurst || (ed.charSay || []).length)){
+    const r = ch.getBoundingClientRect(), padX = r.width*.12;
+    if(e.clientX > r.left + padX && e.clientX < r.right - padX && e.clientY > r.top + r.height*.05 && e.clientY < r.bottom){
+      if(ed.charTap) tapAnim(ch, ed.charTap, true);
+      if(ed.charTapBurst) tapBurst(e.clientX, e.clientY, ed.charTapBurst, ed.charTapSym);
+      tapSay(r.left + r.width/2, r.top + r.height*.08, ed.charSay, _sayIdx[themeKey] = _sayIdx[themeKey] || {});
+    }
+  }
+  // decorations
+  document.querySelectorAll('.deco').forEach(el => { const d = el._d; if(!d || (!d.tap && !d.tapBurst) || el.classList.contains('popped')) return;
+    const r = el.getBoundingClientRect(), cx = r.left + r.width/2, cy = r.top + r.height/2;
+    if(Math.hypot(e.clientX - cx, e.clientY - cy) < Math.max(30, r.width*.6)){
+      if(d.tap) tapAnim(el.querySelector('.dFx'), d.tap);
+      if(d.tapBurst) tapBurst(cx, cy, d.tapBurst, d.tapSym); } });
+});
+/* character idle movement + mouse following */
+function applyCharMotion(ed){
+  const ch = $('chara'); ['idle-none','idle-breathe','idle-sway','idle-bob'].forEach(c => ch.classList.remove(c));
+  if(ed.charIdle && ed.charIdle !== 'float') ch.classList.add('idle-' + ed.charIdle);
+  ch.style.rotate = '';
+}
+(function charMouse(){
+  const ed = EDITS[themeKey] || {}, ch = $('chara');
+  if(ch && ed.charMouse && mX > -999 && !document.body.classList.contains('dragChar')){
+    const r = ch.getBoundingClientRect(), cx = r.left + r.width/2, cy = r.top + r.height/2;
+    const dx = Math.max(-1, Math.min(1, (mX - cx) / (innerWidth/2))), dy = Math.max(-1, Math.min(1, (mY - cy) / (innerHeight/2)));
+    ch._mx = (ch._mx || 0) + (dx - (ch._mx || 0))*.08; ch._my = (ch._my || 0) + (dy - (ch._my || 0))*.08;
+    const base = ed.charX != null ? '-50%' : '0px';
+    if(ed.charMouse === 'tilt'){ ch.style.rotate = `${(-ch._my).toFixed(3)} ${ch._mx.toFixed(3)} 0 ${(Math.hypot(ch._mx, ch._my)*14).toFixed(2)}deg`; ch.style.translate = ed.charX != null ? '-50% 0' : ''; }
+    else if(ed.charMouse === 'lean'){ ch.style.rotate = (ch._mx*7).toFixed(2) + 'deg'; ch.style.translate = ed.charX != null ? '-50% 0' : ''; }
+    else if(ed.charMouse === 'depth'){ ch.style.rotate = ''; ch.style.translate = `calc(${base} + ${(-ch._mx*22).toFixed(1)}px) ${(-ch._my*12).toFixed(1)}px`; }
+  }
+  requestAnimationFrame(charMouse);
+})();
+
+/* ---------- music player picture (per theme) ---------- */
+const EDIT_DIR = CONFIG.editDir || 'chars/edits/';
+function playerCoverHTML(){ const e = EDITS[themeKey] || {}; return e.playerCover ? `<img src="${asset(e.playerCover)}" alt="">` : ''; }
+function refreshCover(){
+  const c = $('pCover'); if(!c) return;
+  const e = EDITS[themeKey] || {};
+  c.dataset.shape = e.playerShape || ''; c.classList.toggle('nospin', e.playerSpin === false);
+  const z = e.playerSize ? e.playerSize + 'px' : ''; c.style.width = c.style.height = z; c.style.flexBasis = z;
+  const s = (typeof songs !== 'undefined' && songs.length) ? songs[idx] : null;
+  if(s && s.cover){ c.classList.remove('themed'); c.innerHTML = `<img src="${asset(s.cover)}" alt="">`; return; }
+  const pc = playerCoverHTML(); if(pc){ c.classList.remove('themed'); c.innerHTML = pc; return; }
+  if(typeof setCover === 'function') setCover(s); else c.innerHTML = '♪';
+}
+async function shrinkImage(file, max, type){
+  if(/gif/.test(file.type)) return file;
+  const bmp = await createImageBitmap(file); let w = bmp.width, h = bmp.height;
+  if(Math.max(w, h) > max){ const k = max / Math.max(w, h); w = Math.round(w*k); h = Math.round(h*k); }
+  const cv2 = document.createElement('canvas'); cv2.width = w; cv2.height = h; cv2.getContext('2d').drawImage(bmp, 0, 0, w, h);
+  return await new Promise(res => cv2.toBlob(b => res(b || file), type || 'image/webp', .88));
+}
+window._edReady = true;
+
 /* ---------- apply a theme ---------- */
 let charTimer, charIdx = 0, signalImg = null, flyerImg = null;
-function ornHTML(){ const o = (CONFIG.themes[themeKey]||{}).ornament; return o ? `<img src="${o}" alt="">` : orn(T.orn); }
+function ornHTML(){ const o = (CONFIG.themes[themeKey]||{}).ornament; return o ? `<img src="${asset(o)}" alt="">` : orn(T.orn); }
 function showChar(src){
   const ch = $('chara'); ch.classList.add('hide');
   setTimeout(() => {
     ch.onload = () => { ch.classList.toggle('wide', ch.naturalWidth > ch.naturalHeight * 1.05); ch.classList.remove('hide'); };
-    ch.src = src;
+    ch.src = asset(src);
   }, ch.src ? 450 : 0);
 }
 function applyTheme(key){
@@ -1651,9 +2132,9 @@ function applyTheme(key){
   st.setProperty('--accent',T.accent); st.setProperty('--accent2',T.accent2); st.setProperty('--text',T.text);
   st.setProperty('--muted',T.muted); st.setProperty('--card',T.card); st.setProperty('--line',T.line);
   st.setProperty('--icon',T.icon); st.setProperty('--title',T.title); st.setProperty('--grad',T.grad);
-  document.body.dataset.theme = key;
+  document.body.dataset.theme = baseOf(key);
   const opt = CONFIG.themes[key] || {};
-  const o = ornHTML(), an = opt.ornamentAnim || (opt.ornament ? 'a-flip' : T.anim);
+  const o = ornHTML(), an = ((EDITS[key]||{}).anim !== undefined) ? T.anim : opt.ornamentAnim || (opt.ornament ? 'a-flip' : T.anim);
   $('ornL').innerHTML = o; $('ornR').innerHTML = o;
   $('ornL').className = 'orn ' + an; $('ornR').className = 'orn r ' + an;
   $('sx1').innerHTML = o; $('sx2').innerHTML = o;
@@ -1676,22 +2157,22 @@ function applyTheme(key){
   signalImg = null;
   if(opt.signal){ signalImg = new Image(); signalImg.src = opt.signal; }
   flyerImg = null;
-  if(opt.flyer){ flyerImg = new Image(); flyerImg.src = opt.flyer; }
+  if(opt.flyer){ flyerImg = new Image(); flyerImg.src = asset(opt.flyer); }
   const lg = $('themeLogo');
-  if(opt.logo){ lg.src = opt.logo; lg.style.display = 'block'; } else lg.style.display = 'none';
+  if(opt.logo){ lg.src = asset(opt.logo); lg.style.display = 'block'; } else lg.style.display = 'none';
   document.body.classList.toggle('customCursor', !!opt.cursor);
-  if(opt.cursor) document.body.style.setProperty('--cur', `url(${opt.cursor}) ${opt.cursorHotspot||'2 2'}, auto`);
-  const fav = $('favicon'); if(fav) fav.href = opt.ornament || opt.cursor || 'data:,';
+  if(opt.cursor) document.body.style.setProperty('--cur', `url(${asset(opt.cursor)}) ${opt.cursorHotspot||'2 2'}, auto`);
+  const fav = $('favicon'); if(fav) fav.href = asset(opt.ornament || opt.cursor) || 'data:,';
 
   const bgFile = opt.background || '', vid = $('bgVideo'), img = $('bgImage');
   vid.style.display = img.style.display = 'none';
   useCanvas = !bgFile;
-  if(bgFile && /\.(mp4|webm)$/i.test(bgFile)){ vid.src = bgFile; vid.style.display = 'block'; }
-  else if(bgFile){ img.src = bgFile; img.style.display = 'block'; }
+  if(bgFile && /\.(mp4|webm)$/i.test(bgFile)){ vid.src = asset(bgFile); vid.style.display = 'block'; }
+  else if(bgFile){ img.src = asset(bgFile); img.style.display = 'block'; }
   cv.style.display = useCanvas ? 'block' : 'none';
   if(useCanvas) buildScene();
 
-  renderUser(); renderServer(); rebuildPlaylist();
+  renderUser(); renderServer(); rebuildPlaylist(); applyExtras(key);
   document.querySelectorAll('#themeMenu button').forEach(b => b.classList.toggle('on', b.dataset.k === key));
   try{ localStorage.setItem('bioThemeKING', key); }catch(e){}
 }
@@ -1699,9 +2180,13 @@ function applyTheme(key){
 /* ---------- theme picker ---------- */
 const isOwner = CONFIG.themePicker !== 'off' && location.hash === '#' + CONFIG.secretWord;
 const pickerOn = isOwner || CONFIG.themePicker === 'everyone';
-if(pickerOn){
+function buildThemeMenu(){
+  if(!pickerOn) return;
   $('themeMenu').innerHTML = Object.entries(THEMES).map(([k,v]) =>
-    `<button data-k="${k}"><i style="background:linear-gradient(135deg,${v.accent},${v.accent2})"></i>${v.label}</button>`).join('');
+    `<button data-k="${k}" class="${k === themeKey ? 'on' : ''}"><i style="background:linear-gradient(135deg,${v.accent},${v.accent2})"></i>${v.label}${CUSTOM[k] ? ' ✨' : ''}</button>`).join('');
+}
+if(pickerOn){
+  buildThemeMenu();
   $('themeBtn').onclick = e => { e.stopPropagation(); $('themeMenu').classList.toggle('open'); };
   $('themeMenu').onclick = e => { const b = e.target.closest('button'); if(!b) return;
     applyTheme(b.dataset.k); $('themeMenu').classList.remove('open');
@@ -1711,6 +2196,7 @@ if(pickerOn){
 
 if(CONFIG.views){ $('viewsN').textContent = CONFIG.views; $('views').style.display='flex'; }
 let saved = null; try{ saved = localStorage.getItem('bioThemeKING'); }catch(e){}
+const savedRaw = saved;
 if(saved && !THEMES[saved]) saved = null;
 // your last pick on this device wins; everyone else gets the saved default (site.json) or CONFIG.theme
 applyTheme(saved || CONFIG.theme || Object.keys(THEMES)[0]);
@@ -1744,10 +2230,23 @@ document.addEventListener('visibilitychange', () => {
 fetch('site.json?v=' + Date.now(), {cache:'no-store'}).then(r => r.ok ? r.json() : null).then(d => {
   if(!d) return;
   siteSongs = d.songs || [];
+  loadEdits(d); if(window._edSynced) window._edSynced(d);
+  if(isOwner && !saved && savedRaw && THEMES[savedRaw]) saved = savedRaw;
   rebuildPlaylist(); renderSongList();
   // normal visitors always get the theme he saved for everyone; only #owner keeps its own last pick
   if(d.defaultTheme && THEMES[d.defaultTheme] && (!isOwner || !saved)) applyTheme(d.defaultTheme);
+  else applyTheme(saved && THEMES[saved] ? saved : themeKey);   // re-apply so edits show
 }).catch(()=>{});
+
+/* ---------- clicking the cards opens Discord: KING card = profile, server card = join ---------- */
+(function(){
+  const cards = document.querySelectorAll('.cards .card'), go = url => window.open(url, '_blank', 'noopener');
+  const prof = cards[0], srv = cards[1];
+  if(prof && CONFIG.discordUserId){ prof.classList.add('clickable'); prof.title = 'Open my Discord profile';
+    prof.addEventListener('click', () => go('https://discord.com/users/' + CONFIG.discordUserId)); }
+  if(srv){ srv.classList.add('clickable'); srv.title = 'Join the server';
+    srv.addEventListener('click', () => { if(CONFIG.discordInvite) go('https://discord.gg/' + CONFIG.discordInvite); }); }
+})();
 
 /* ---------- hidden owner music panel ---------- */
 const GH = CONFIG.github;
@@ -1800,7 +2299,7 @@ function renderSongList(){
   const all = [...CONFIG.songs.map(s => ({...s, fixed:true})), ...siteSongs];
   el.innerHTML = all.length ? all.map(s => `<div class="song" data-src="${s.src}">
       <span>♪ ${s.title || s.src}${s.artist ? ' — ' + s.artist : ''}</span>
-      ${s.fixed ? '' : `<button data-act="edit" title="Pick themes">🎨</button><button data-act="del" title="Remove">✕</button>`}
+      ${s.fixed ? '' : `<button data-act="cover" title="Song picture">🖼</button>${s.cover ? '<button data-act="uncover" title="Remove song picture">🚫</button>' : ''}<button data-act="edit" title="Pick themes">🎨</button><button data-act="del" title="Remove">✕</button>`}
       <div class="tags">${tagText(s)}</div></div>`).join('')
     : '<p>No songs yet — add one below.</p>';
 }
@@ -1850,6 +2349,28 @@ if(isOwner){
   $('mpList').onclick = async e => {
     const b = e.target.closest('button[data-act]'); if(!b) return;
     const row = b.closest('.song'), path = row.dataset.src;
+
+    if(b.dataset.act === 'cover'){
+      if(needKey()) return;
+      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+      inp.onchange = async () => { const f = inp.files[0]; if(!f) return;
+        try{ status('Uploading picture…');
+          const blob = await shrinkImage(f, 500);
+          const ext = blob.type === 'image/gif' ? 'gif' : blob.type === 'image/png' ? 'png' : 'webp';
+          const cpath = `music/covers/${path.split('/').pop().replace(/\.[^.]+$/, '')}-${Date.now().toString(36)}.${ext}`;
+          PREVIEW[cpath] = URL.createObjectURL(blob);
+          await gh(cpath, { method:'PUT', body: JSON.stringify({ message:`Add cover for ${path}`, content: await fileB64(blob), branch: GH.branch }) });
+          const d = await saveSite(d => { (d.songs || []).forEach(s => { if(s.src === path) s.cover = cpath; }); });
+          siteSongs = d.songs; renderSongList(); rebuildPlaylist(); refreshCover(); status('✓ Song picture saved. Live in about a minute.');
+        }catch(err){ status('Upload failed: ' + err.message); } };
+      inp.click(); return;
+    }
+    if(b.dataset.act === 'uncover'){
+      if(needKey()) return;
+      try{ status('Removing picture…'); const d = await saveSite(d => { (d.songs || []).forEach(s => { if(s.src === path) delete s.cover; }); });
+        siteSongs = d.songs; renderSongList(); rebuildPlaylist(); refreshCover(); status('✓ Picture removed.'); }catch(err){ status('Failed: ' + err.message); }
+      return;
+    }
     if(b.dataset.act === 'edit'){
       const open = row.querySelector('.edit'); if(open) return open.remove();
       const cur = (siteSongs.find(s => s.src === path) || {}).themes || [];
@@ -1891,6 +2412,389 @@ if(Object.keys(THEMES).length < 2){
   $('musicBtn').style.right = '16px';
   const st = document.createElement('style'); st.textContent = '#mpList button[data-act=edit]{display:none}'; document.head.appendChild(st);
   const tp = $('mpThemes'); if(tp){ tp.style.display = 'none'; if(tp.previousElementSibling) tp.previousElementSibling.style.display = 'none'; }
+}
+/* =====================================================================
+   ✏️ THEME EDITOR (only in #owner) — edit any theme live, then Save
+   ===================================================================== */
+if(isOwner){
+  const FONTS = [...new Set([...document.querySelectorAll('link[href*="fonts.googleapis"]')].flatMap(l =>
+    [...l.href.matchAll(/family=([^:&]+)/g)].map(m => decodeURIComponent(m[1]).replace(/\+/g,' '))))];
+  const ORNS = [...document.querySelectorAll('defs g[id^="o-"]')].map(g => g.id.slice(2));
+  const ANIMS = { 'a-spin':'Spin', 'a-spinfast':'Fast spin', 'a-sway':'Sway', 'a-flip':'Flip', 'a-pulse':'Pulse', '':'Still' };
+  const TAPS = { '':'Nothing', nod:'🙇 Tilt down (bow)', back:'😮 Lean back', jump:'🦘 Jump', spin:'🔄 Spin', flip:'🪙 Flip', shake:'📳 Shake', squish:'🍮 Squish', wiggle:'〰️ Wiggle', grow:'🔍 Grow' };
+  const BURSTS = { '':'None', sparkles:'✦ Sparkles', hearts:'💖 Hearts', stars:'⭐ Stars', custom:'Your own emoji ↓' };
+  const PLACES = { both:'Both sides of name', left:'Left of name', right:'Right of name', above:'Above name', below:'Below name', none:'Hidden' };
+  let selDeco = -1, W = {}, tab = 'text', lastSaved = JSON.parse(JSON.stringify(EDITS)), dragOn = false, uploads = [];
+  const st = msg => $('epStatus').textContent = msg;
+  const hasMusic = !!$('musicPanel');
+  const KEYMSG = hasMusic ? 'Add your GitHub key in 🎵 first (one-time setup).' : 'Add the GitHub key first: Theme tab → GitHub key.';
+  const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  const toHex = c => { if(!c) return '#ffffff'; if(c[0] === '#') return c.length === 4 ? '#' + [...c.slice(1)].map(x => x + x).join('') : c.slice(0,7);
+    const m = /rgba?\(([^)]+)\)/.exec(c); if(!m) return '#ffffff'; const [r,g,b] = m[1].split(',').map(Number);
+    return '#' + [r,g,b].map(v => (v|0).toString(16).padStart(2,'0')).join(''); };
+  const alphaOf = c => { const m = /rgba\([^,]+,[^,]+,[^,]+,\s*([\d.]+)/.exec(c || ''); return m ? +m[1] : 1; };
+  const gradCols = g => (String(g || '').match(/#[0-9a-f]{3,8}/gi) || ['#ffffff','#ff7eb6','#ffffff']).slice(0,3);
+
+  function openEditor(){ selDeco = -1; W = JSON.parse(JSON.stringify(EDITS[themeKey] || {})); $('epTheme').textContent = T.label; render(); $('editPanel').classList.add('open'); }
+  function changed(kind){
+    if(Object.keys(W).length) EDITS[themeKey] = W; else delete EDITS[themeKey];
+    rebuildTheme(themeKey); T = THEMES[themeKey];
+    if(kind === 'light'){ applyExtras(themeKey); }
+    else { clearTimeout(changed.h); changed.h = setTimeout(() => { applyTheme(themeKey); buildThemeMenu(); }, 180); }
+    st('Unsaved changes — press 💾 Save to make them live.');
+  }
+
+  /* ---------- the tabs ---------- */
+  const row = (label, html) => `<label class="ef"><span>${label}</span>${html}</label>`;
+  const txt = (f, label, ph = '') => row(label, `<input type="text" data-f="${f}" value="${esc(W[f] ?? T[f] ?? '')}" placeholder="${esc(ph)}">`);
+  const col = (f, label) => row(label, `<input type="color" data-f="${f}" data-k="hex" value="${toHex(T[f])}">`);
+  const rgba = (f, label) => row(label, `<span class="pair"><input type="color" data-f="${f}" data-k="rgbaC" value="${toHex(T[f])}"><input type="range" min="0" max="1" step=".02" data-f="${f}" data-k="rgbaA" value="${alphaOf(T[f])}" title="see-through"></span>`);
+  const rng = (f, label, min, max, step, val, kind = 'light') => row(label, `<input type="range" data-f="${f}" data-k="num" data-kind="${kind}" min="${min}" max="${max}" step="${step}" value="${val}">`);
+  const sel = (f, label, opts, val, kind = 'full') => row(label, `<select data-f="${f}" data-kind="${kind}">${Object.entries(opts).map(([k,v]) => `<option value="${k}" ${k === val ? 'selected' : ''}>${v}</option>`).join('')}</select>`);
+  const up = (kind, label, accept) => `<label class="wbtn upl">⬆ ${label}<input type="file" data-up="${kind}" accept="${accept}" hidden></label>`;
+  const opt = CONFIG => CONFIG.themes[themeKey] || {};
+
+  const TABS = {
+    text(){ return `
+      ${txt('label','Theme name (🎨 menu)')}
+      ${txt('nameText','Name at the top', CONFIG.name)}
+      ${txt('tab','Tab emoji')}
+      ${txt('splash','Splash screen big text')}
+      ${txt('splashSub','Splash screen small text')}
+      ${txt('subtitle','Small line under your name')}
+      ${row('Typewriter lines <i>(one per line)</i>', `<textarea data-f="bios" data-k="lines" rows="5">${esc((W.bios || T.bios || []).join('\n'))}</textarea>`)}
+      ${row('Click sparkles <i>(2 symbols)</i>', `<input type="text" data-f="sparks" data-k="chars" value="${esc((T.sparks || []).join(''))}" maxlength="4">`)}
+      <button class="wbtn" id="epSplash">👁 Preview splash screen</button>`; },
+    look(){ const g = gradCols(T.grad), fontNow = (/'([^']+)'/.exec(T.title) || [,''])[1], L = W.look || {};
+      return `
+      <b>Colors</b>
+      ${col('accent','Main color')}${col('accent2','Second color')}${col('text','Text')}${col('muted','Dim text')}${col('icon','Social icons')}
+      ${rgba('card','Card background')}${rgba('line','Card border')}
+      ${row('Name shine (3 colors)', `<span class="pair">${g.map((c,i) => `<input type="color" data-f="grad" data-k="grad${i}" value="${toHex(c)}">`).join('')}</span>`)}
+      <hr><b>Font</b>
+      ${row('Name font', `<select data-f="title" data-k="font">${[...new Set([fontNow, ...FONTS])].filter(Boolean).map(f => `<option ${f === fontNow ? 'selected' : ''}>${esc(f)}</option>`).join('')}</select>`)}
+      ${row('…or any Google Font name', `<input type="text" data-f="title" data-k="fontCustom" placeholder="e.g. Lobster">`)}
+      ${row('Smaller text font <i>(bio, cards)</i>', `<select data-f="look.bodyFont" data-k="font"><option value="">Default</option>${FONTS.map(f => `<option value="${esc(f)}" ${(L.bodyFont || '').includes(f) ? 'selected' : ''}>${esc(f)}</option>`).join('')}</select>`)}
+      <hr><b>Name style</b>
+      ${rng('look.nameScale','Size',.5,1.8,.05,L.nameScale ?? 1)}
+      ${rng('look.spacing','Letter spacing',-2,16,.5,L.spacing ?? 1)}
+      ${row('ALL CAPS', `<input type="checkbox" data-f="look.upper" data-k="bool" ${L.upper ? 'checked' : ''}>`)}
+      ${row('Outline', `<span class="pair"><input type="range" data-f="look.outline" data-k="num" min="0" max="4" step=".25" value="${L.outline ?? 0}"><input type="color" data-f="look.outlineCol" value="${toHex(L.outlineCol || '#000000')}"></span>`)}
+      ${row('Glow', `<span class="pair"><input type="range" data-f="look.nameGlow" data-k="num" min="0" max="40" step="1" value="${L.nameGlow ?? 0}"><input type="color" data-f="look.nameGlowCol" value="${toHex(L.nameGlowCol || T.accent)}"></span>`)}
+      <hr><b>Cards</b>
+      ${rng('look.radius','Corner roundness',0,40,1,L.radius ?? 16)}
+      ${rng('look.blur','Blur behind cards',0,30,1,L.blur ?? 14)}
+      ${rng('look.cardShadow','Glow around cards',0,50,1,L.cardShadow ?? 0)}
+      <hr><b>Background</b>
+      ${rng('look.bright','Brightness',.3,1.6,.05,L.bright ?? 1)}
+      ${rng('look.vignette','Dark edges',0,1,.05,L.vignette ?? 1)}
+      ${row('Character glow', `<span class="pair"><input type="range" data-f="look.charGlow" data-k="num" min="0" max="60" step="1" value="${L.charGlow ?? 18}"><input type="color" data-f="look.charGlowCol" value="${toHex(L.charGlowCol || T.accent)}"></span>`)}
+      <button class="wbtn" id="epLookReset">↺ Reset these style settings</button>
+      <hr><b>Background scene</b>
+      ${sel('scene','Animated scene', Object.fromEntries(Object.keys(SCENES).map(k => [k, (BASE_T[k] || {}).label || k])), sceneOf(themeKey))}
+      <p>Mix any theme's animation with this theme's colors and pictures.</p>`; },
+    pictures(){ const o = opt(CONFIG), list = [].concat(o.character || []).filter(Boolean), e = W;
+      return `
+      <b>Characters</b> <i>(several = they take turns)</i>
+      <div class="thumbs">${list.map((p,i) => `<span class="th"><img src="${esc(asset(p))}"><button data-delchar="${i}" title="Remove">✕</button></span>`).join('') || '<p>None yet.</p>'}</div>
+      ${up('character','Add character (PNG/GIF)','image/*')}
+      ${sel('side','Default spot', { right:'Right side', left:'Left side' }, o.side || 'right')}
+      <button class="wbtn ${dragOn ? 'go' : ''}" id="epDrag">✋ ${dragOn ? 'Dragging ON — drag the picture, scroll to resize' : 'Move it by dragging'}</button>
+      ${e.charX != null ? `${rng('charH','Size',20,110,1,e.charH ?? 70)}${rng('charX','Left ↔ right',0,100,.5,e.charX)}${rng('charY','Up ↕ down',-20,80,.5,e.charY ?? 0)}<button class="wbtn" id="epCharReset">↺ Back to default spot</button>` : ''}
+      ${row('Mirror it', `<input type="checkbox" data-f="charFlip" data-k="bool" data-kind="light" ${e.charFlip ? 'checked' : ''}>`)}
+      ${rng('charFade','See-through',.1,1,.05,e.charFade ?? 1)}
+      <hr><b>Character reactions</b>
+      ${sel('charTap','When tapped', TAPS, e.charTap || '', 'light')}
+      ${sel('charTapBurst','Burst on tap', BURSTS, e.charTapBurst || '', 'light')}
+      ${e.charTapBurst === 'custom' ? txt('charTapSym','Burst emoji (1–3)','💜🔥') : ''}
+      ${row('Speech bubble on tap <i>(one line per tap, in order)</i>', `<textarea data-f="charSay" data-k="lines" data-kind="light" rows="3" placeholder="hi!&#10;stop poking me 😤">${esc((e.charSay || []).join('\n'))}</textarea>`)}
+      ${sel('charIdle','Moves on its own', { float:'🎈 Float (default)', breathe:'😮‍💨 Breathe', sway:'🍃 Sway', bob:'🎵 Bob to the beat', none:'⏸ Still' }, e.charIdle || 'float', 'light')}
+      ${sel('charMouse','Follows the mouse', { '':'No', tilt:'🧊 3D tilt toward it', lean:'↔️ Lean toward it', depth:'🪟 Depth shift' }, e.charMouse || '', 'light')}
+      ${$('themeLogo') ? `<hr><b>Logo above the name</b>
+      <p>${o.logo ? `Using <img class="mini" src="${esc(asset(o.logo))}">` : 'None.'}</p>
+      ${up('logo','Upload logo','image/*')}${o.logo ? '<button class="wbtn" data-clear="logo">✕ Remove logo</button>' : ''}` : ''}
+      <hr><b>Music player picture</b>
+      <p>${e.playerCover ? `Using <img class="mini" src="${esc(asset(e.playerCover))}">` : 'Using the theme\'s spinning icon.'} <i>(songs with their own picture still show theirs)</i></p>
+      ${up('playerCover','Upload player picture','image/*')}
+      ${e.playerCover ? '<button class="wbtn" data-clear="playerCover">✕ Back to the theme icon</button>' : ''}
+      ${sel('playerShape','Shape', { '':'⚪ Circle', rounded:'▢ Rounded square', square:'⬛ Square' }, e.playerShape || '', 'light')}
+      ${rng('playerSize','Size',40,110,1,e.playerSize ?? 58)}
+      ${row('Spins while playing', `<input type="checkbox" data-f="playerSpin" data-k="boolOn" data-kind="light" ${e.playerSpin === false ? '' : 'checked'}>`)}
+      <hr><b>Background</b>
+      <p>${o.background ? `Using <code>${esc(o.background.split('/').pop())}</code>` : 'Using the animated scene.'}</p>
+      ${up('background','Picture / GIF / MP4 background','image/*,video/mp4,video/webm')}
+      ${o.background ? '<button class="wbtn" data-clear="background">✕ Back to animated scene</button>' : ''}
+      <hr><b>Mouse pointer</b>
+      <p>${o.cursor ? `Using <img class="mini" src="${esc(asset(o.cursor))}">` : 'Using the theme\'s built-in pointer.'}</p>
+      ${up('cursor','Upload pointer (auto-shrinks to 32px)','image/png,image/webp,image/jpeg,image/gif')}
+      ${sel('cursorHotspot','Click point', { '0 0':'Top-left tip', '16 16':'Center', '0 31':'Bottom-left', '31 0':'Top-right' }, o.cursorHotspot || '0 0')}
+      ${o.cursor ? '<button class="wbtn" data-clear="cursor">✕ Back to built-in pointer</button>' : ''}`; },
+    icons(){ const o = opt(CONFIG), e = W;
+      return `
+      <b>Spinning icons</b>
+      <div class="ornGrid">${ORNS.map(k => `<button data-orn="${k}" class="${!o.ornament && T.orn === k ? 'on' : ''}" title="${k}">${orn(k)}</button>`).join('')}</div>
+      ${up('ornament','Use my own picture','image/*')}
+      ${o.ornament ? `<p>Using <img class="mini" src="${esc(asset(o.ornament))}"> <button class="link" data-clear="ornament">✕ use built-in</button></p>` : ''}
+      ${sel('ornPlace','Where', PLACES, e.ornPlace || 'both', 'light')}
+      ${rng('ornSize','Size',16,120,1,e.ornSize ?? 42)}
+      ${sel('anim','Movement', ANIMS, T.anim || '')}
+      ${rng('ornSpeed','Speed (seconds per turn — lower = faster)',.4,20,.1,e.ornSpeed ?? 6)}
+      ${row('Also by the social icons', `<input type="checkbox" data-f="ornSocials" data-k="boolOn" data-kind="light" ${e.ornSocials === false ? '' : 'checked'}>`)}`; },
+    decor(){ const L = W.decos || [], d = L[selDeco];
+      const D = (p, label, min, max, step, val) => `<label class="ef"><span>${label}</span><input type="range" data-d="${p}" min="${min}" max="${max}" step="${step}" value="${val}"></label>`;
+      const DA = { 'a-spin':'🔄 Spin', 'a-spinfast':'🌀 Fast spin', 'a-flip':'🪙 Flip (coin)', 'a-sway':'🍃 Sway', 'a-swing':'🔔 Swing (pendulum)', 'a-wobble':'〰️ Wobble',
+        'a-float':'🎈 Float up & down', 'a-bounce':'🏀 Bounce', 'a-zigzag':'⚡ Zig-zag', 'a-orbit':'🪐 Circle around', 'a-roll':'🎳 Roll side to side',
+        'a-pulse':'💢 Pulse', 'a-heartbeat':'💓 Heartbeat', 'a-zoom':'🔍 Zoom in & out', 'a-jello':'🍮 Jello', 'a-tada':'🎉 Tada', 'a-shake':'📳 Shake',
+        'a-twinkle':'✨ Twinkle', 'a-glowpulse':'🌫️ Fade in & out', 'a-blink':'💡 Blink',
+        'a-drift':'➡️ Drift across the screen', 'a-fall':'⬇️ Fall from the top', 'a-rise':'⬆️ Rise from the bottom', '':'⏸ Still' };
+      const DX = { '':'None', rainbow:'🌈 Rainbow colors', flicker:'💡 Neon flicker', pulseglow:'✨ Glow pulse', shimmer:'💎 Shimmer', ghost:'👻 Ghost (fades)', blur:'🌫️ Dreamy blur', gray:'⬛ Black & white', invert:'🔁 Inverted colors' };
+      const DR = { '':'Nothing', follow:'🧲 Follows the mouse/finger', flee:'🏃 Runs away from the mouse', pop:'🎈 Pops when clicked (comes back)', look:'👀 Turns to face the mouse', depth:'🪟 3D depth (shifts with mouse)' };
+      return `<p>Add as many as you want and put them anywhere. While this tab is open you can <b style="display:inline">drag them on the page</b> and scroll on one to resize it.</p>
+      <b>On this theme (${L.length})</b>
+      <div class="decoList">${L.map((x,i) => `<button data-dsel="${i}" class="${i === selDeco ? 'on' : ''}">${decoInner(x)}</button>`).join('') || '<p>None yet. Add one below.</p>'}</div>
+      ${d ? `<div class="fx on"><b>Selected</b>
+        ${D('size','Size',12,500,1,d.size || 60)}
+        ${D('rot','Tilt',-180,180,1,d.rot || 0)}
+        <label class="ef"><span>Movement</span><select data-d="anim">${Object.entries(DA).map(([k,v]) => `<option value="${k}" ${(d.anim ?? 'a-spin') === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
+        ${D('speed','Speed (seconds per loop, lower = faster)',.3,20,.1,d.speed || 6)}
+        <label class="ef"><span>Extra effect on top</span><select data-d="fx2">${Object.entries(DX).map(([k,v]) => `<option value="${k}" ${(d.fx2 || '') === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
+        ${d.fx2 && !['gray','invert'].includes(d.fx2) ? D('fx2spd','Extra effect speed (seconds)',.3,10,.1,d.fx2spd || 3) : ''}
+        <label class="ef"><span>When tapped</span><select data-d="tap">${Object.entries(TAPS).map(([k,v]) => `<option value="${k}" ${(d.tap || '') === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
+        <label class="ef"><span>Burst on tap</span><select data-d="tapBurst">${Object.entries(BURSTS).map(([k,v]) => `<option value="${k}" ${(d.tapBurst || '') === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
+        ${d.tapBurst === 'custom' ? `<label class="ef"><span>Burst emoji (1–3)</span><input type="text" data-d="tapSym" value="${esc(d.tapSym || '')}" maxlength="8"></label>` : ''}
+        <label class="ef"><span>Reacts to visitors</span><select data-d="react">${Object.entries(DR).map(([k,v]) => `<option value="${k}" ${(d.react || '') === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
+        ${D('op','See-through',.1,1,.05,d.op ?? 1)}
+        ${D('x','Left ↔ right',0,100,.5,d.x ?? 50)}${D('y','Up ↕ down',0,100,.5,d.y ?? 50)}
+        <label class="ef"><span>Glow</span><span class="pair"><input type="checkbox" data-d="glow" ${d.glow ? 'checked' : ''}><input type="color" data-d="glowCol" value="${toHex(d.glowCol || T.accent)}"></span></label>
+        ${d.kind === 'emoji' ? `<label class="ef"><span>Text / emoji</span><input type="text" data-d="v" value="${esc(d.v)}" maxlength="12"></label><label class="ef"><span>Text color</span><input type="color" data-d="color" value="${toHex(d.color || T.text)}"></label>` : ''}
+        <label class="ef"><span>In front of the cards</span><input type="checkbox" data-d="front" ${d.front ? 'checked' : ''}></label>
+        <label class="ef"><span>Mirror</span><input type="checkbox" data-d="flip" ${d.flip ? 'checked' : ''}></label>
+        <label class="ef"><span>Reverse direction</span><input type="checkbox" data-d="rev" ${d.rev ? 'checked' : ''}></label>
+        <div class="pair"><button class="wbtn" id="dDup">⧉ Duplicate</button><button class="wbtn danger" id="dDel">🗑 Remove</button></div></div>` : ''}
+      <hr><b>Add a built-in icon</b>
+      <div class="ornGrid add">${ORNS.map(k => `<button data-dadd="${k}" title="${k}">${orn(k)}</button>`).join('')}</div>
+      <b>Add an emoji or text</b>
+      <div class="pair"><input type="text" id="dEmoji" placeholder="⭐ ♥ 🔥 or any text" maxlength="12"><button class="wbtn" id="dAddEmoji" style="width:auto;margin:0">Add</button></div>
+      ${up('deco','Add my own picture / GIF','image/*')}
+      ${L.length ? '<button class="wbtn danger" id="dClear">Remove all decorations</button>' : ''}`; },
+    effects(){ const fx = W.effects || {};
+      return `<p>Layer extra effects on top of this theme.</p>` + Object.entries(FX_LIST).map(([k, label]) => { const c = fx[k] || {};
+        return `<div class="fx ${c.on ? 'on' : ''}"><label class="fxh"><input type="checkbox" data-fx="${k}" data-p="on" ${c.on ? 'checked' : ''}> ${label}</label>
+          ${c.on ? `<div class="fxb">
+            ${k === 'floater' ? `${c.img ? `<img class="mini" src="${esc(asset(c.img))}">` : '<p>Pick a picture:</p>'}${up('floater','Upload picture','image/*')}
+               <label class="ef"><span>How many</span><input type="range" data-fx="${k}" data-p="count" min="1" max="3" step="1" value="${c.count ?? 1}"></label>` : ''}
+            <label class="ef"><span>${k === 'floater' ? 'Size' : k === 'glow' || k === 'fog' ? 'Strength' : 'Amount'}</span><input type="range" data-fx="${k}" data-p="amt" min="5" max="100" step="1" value="${c.amt ?? 50}"></label>
+            <label class="ef"><span>Speed</span><input type="range" data-fx="${k}" data-p="spd" min=".2" max="3" step=".1" value="${c.spd ?? 1}"></label>
+            ${k === 'floater' ? '' : `<label class="ef"><span>Color</span><span class="pair"><input type="color" data-fx="${k}" data-p="color" value="${toHex(c.color || FX_COL[k] || T.accent)}">${c.color ? `<button class="link" data-fxreset="${k}">auto</button>` : ''}</span></label>`}
+          </div>` : ''}</div>`; }).join(''); },
+    theme(){ const custom = !!CUSTOM[themeKey];
+      return `
+      <b>Make a new theme</b>
+      <p>Copies <b>${esc(T.label)}</b> (with your changes) into a new theme you can change however you want.</p>
+      <input type="text" id="epNewName" placeholder="New theme name">
+      <button class="wbtn go" id="epCopy">＋ Copy as new theme</button>
+      <hr>
+      ${custom ? `<b>Delete</b><p>Removes "${esc(T.label)}" from your site.</p><button class="wbtn danger" id="epDel">🗑 Delete this theme</button>`
+               : `<b>Reset</b><p>Undo every edit on "${esc(T.label)}" and go back to how it was built.</p><button class="wbtn danger" id="epReset">↺ Reset to original</button>`}
+      ${hasMusic ? '' : `<hr><b>GitHub key</b><p>${getTok() ? 'Key saved on this device ✓' : 'Needed once per device to save. Same key as the main page (github.com → Settings → Developer settings → Fine-grained tokens, repo <b>iitstymfk.github.io</b>, Contents: Read and write).'}</p>
+      <input type="password" id="epTok" placeholder="${getTok() ? 'key saved ✓' : 'github_pat_...'}"><div class="pair"><button class="wbtn go" id="epTokSave">Save key</button><button class="wbtn" id="epTokForget">Forget key</button></div>`}
+      <hr><p>Edits save to <code>site.json</code> on your GitHub. Pictures you upload go in <code>${EDIT_DIR}</code>.</p>`; },
+  };
+  function render(){
+    document.querySelectorAll('#editPanel .epTabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+    $('epTheme').textContent = T.label; $('epBody').innerHTML = TABS[tab]();
+    document.body.classList.toggle('decoEdit', tab === 'decor' && $('editPanel').classList.contains('open')); markSel();
+  }
+  function markSel(){ document.querySelectorAll('.deco').forEach(el => el.classList.toggle('sel', +el.dataset.i === selDeco)); }
+  function addDeco(d, quiet){
+    W.decos = W.decos || [];
+    W.decos.push({ x: rr(30,70), y: rr(15,40), size: 60, anim: 'a-spin', speed: 6, op: 1, glow: true, ...d });
+    selDeco = W.decos.length - 1; changed('light'); render();
+    if(!quiet) st('Added — drag it where you want it.');
+  }
+  // drag decorations on the page
+  let dd = null;
+  addEventListener('pointerdown', e => {
+    if(!document.body.classList.contains('decoEdit')) return;
+    const el = e.target.closest('.deco'); if(!el) return;
+    e.preventDefault(); e.stopPropagation();
+    selDeco = +el.dataset.i; const d = W.decos[selDeco];
+    dd = { x: e.clientX, y: e.clientY, dx: d.x ?? 50, dy: d.y ?? 50 }; render();
+  }, true);
+  addEventListener('pointermove', e => { if(!dd) return; const d = W.decos[selDeco]; if(!d) return;
+    d.x = +Math.max(0, Math.min(100, dd.dx + (e.clientX - dd.x) / innerWidth * 100)).toFixed(1);
+    d.y = +Math.max(0, Math.min(100, dd.dy + (e.clientY - dd.y) / innerHeight * 100)).toFixed(1);
+    changed('light'); markSel(); }, true);
+  addEventListener('pointerup', () => { if(dd){ dd = null; render(); } }, true);
+  addEventListener('wheel', e => { if(!document.body.classList.contains('decoEdit')) return; const el = e.target.closest('.deco'); if(!el) return;
+    e.preventDefault(); selDeco = +el.dataset.i; const d = W.decos[selDeco]; d.size = Math.max(12, Math.min(500, (d.size || 60) - Math.sign(e.deltaY) * 6)); changed('light'); markSel(); }, { passive: false, capture: true });
+
+  /* ---------- reading the inputs ---------- */
+  function onInput(e){
+    const el = e.target;
+    if(el.dataset.fx){ const k = el.dataset.fx, p = el.dataset.p; W.effects = W.effects || {}; const c = W.effects[k] = W.effects[k] || {};
+      c[p] = el.type === 'checkbox' ? el.checked : el.type === 'color' ? el.value : +el.value;
+      if(p === 'on'){ if(!el.checked && !c.img) delete W.effects[k]; changed('light'); if(e.type === 'change') render(); return; }
+      changed('light'); return; }
+    if(el.dataset.d){ const d = (W.decos || [])[selDeco]; if(!d) return; const p = el.dataset.d;
+      d[p] = el.type === 'checkbox' ? el.checked : (el.type === 'range' ? +el.value : el.value);
+      changed('light'); if(e.type === 'change' && el.tagName === 'SELECT') render(); return; }
+    const f = el.dataset.f; if(!f) return;
+    const k = el.dataset.k, kind = el.dataset.kind || 'full';
+    let v = el.value;
+    if(k === 'num') v = +v;
+    else if(k === 'bool') v = el.checked;
+    else if(k === 'boolOn'){ if(el.checked){ delete W[f]; changed(kind); return; } v = false; }
+    else if(k === 'lines') v = v.split('\n').map(s => s.trim()).filter(Boolean);
+    else if(k === 'chars'){ const a = [...v]; v = [a[0] || '✦', a[1] || a[0] || '·']; }
+    else if(k === 'rgbaC' || k === 'rgbaA'){ const cur = T[f]; const hx = k === 'rgbaC' ? v : toHex(cur), a = k === 'rgbaA' ? +v : alphaOf(cur); v = hexA(hx, a); }
+    else if(/^grad\d$/.test(k)){ const g = gradCols(T.grad); g[+k.slice(4)] = v; v = `linear-gradient(90deg,${g[0]},${g[1]},${g[2]},${g[0]})`; }
+    else if(k === 'font' || k === 'fontCustom'){ if(!v.trim()){ if(f.includes('.')) v = ''; else return; } else v = `'${v.trim()}',sans-serif`; }
+    if(f.includes('.')){ const [a, b2] = f.split('.'); const o = W[a] = W[a] || {};
+      if(v === '' || v === false) delete o[b2]; else o[b2] = v;
+      if(!Object.keys(o).length) delete W[a]; changed('light'); return; }
+    if(f === 'side' && W.charX != null){ delete W.charX; delete W.charY; delete W.charH; }
+    W[f] = v;
+    if(f === 'anim' && W.ornSpeed == null) delete W.ornSpeed;
+    if(e.type === 'input' && (el.type === 'text' || el.tagName === 'TEXTAREA') && kind === 'full' && !['label','tab'].includes(f)){
+      // text: update instantly without redrawing the scene
+      if(f === 'nameText'){ applyExtras(themeKey); }
+      rebuildTheme(themeKey); T = THEMES[themeKey]; EDITS[themeKey] = W;
+      if(f === 'splash') $('splashText').textContent = v; if(f === 'splashSub') $('splashSub').textContent = v; if(f === 'subtitle') $('jp').textContent = v;
+      if(f === 'bios'){ clearTimeout(bioTimer); bioI = 0; bioJ = 0; bioDel = false; typeTick(); }
+      st('Unsaved changes — press 💾 Save to make them live.'); return;
+    }
+    changed(['playerShape','playerSize','nameText','charH','charX','charY','charFade','ornSize','ornSpeed','ornPlace','charTap','charTapBurst','charTapSym','charSay','charIdle','charMouse'].includes(f) ? 'light' : kind);
+    if(f === 'charTapBurst' && e.type === 'change') setTimeout(render, 50);
+  }
+  $('epBody').addEventListener('input', onInput);
+  $('epBody').addEventListener('change', e => { if(e.target.dataset.up) return onUpload(e); if(e.target.type === 'checkbox' || e.target.tagName === 'SELECT') onInput(e);
+    if(e.target.dataset.f === 'side' || e.target.dataset.f === 'scene' || e.target.dataset.f === 'anim') setTimeout(render, 220); });
+
+  /* ---------- buttons inside the panel ---------- */
+  $('epBody').addEventListener('click', async e => {
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.orn){ W.orn = b.dataset.orn; delete W.ornament; changed(); setTimeout(render, 220); return; }
+    if(b.dataset.clear === 'playerCover'){ delete W.playerCover; changed('light'); render(); return; }
+    if(b.dataset.clear){ W[b.dataset.clear] = ''; if(b.dataset.clear === 'cursor') delete W.cursorHotspot; changed(); setTimeout(render, 220); return; }
+    if(b.dataset.delchar != null){ const list = [].concat(opt(CONFIG).character || []); list.splice(+b.dataset.delchar, 1); W.character = list; changed(); setTimeout(render, 220); return; }
+    if(b.dataset.fxreset){ delete W.effects[b.dataset.fxreset].color; changed('light'); render(); return; }
+    if(b.dataset.dsel != null){ selDeco = +b.dataset.dsel; render(); markSel(); return; }
+    if(b.dataset.dadd){ addDeco({ kind: 'orn', v: b.dataset.dadd }); return; }
+    if(b.id === 'dAddEmoji'){ const v = $('dEmoji').value.trim(); if(v) addDeco({ kind: 'emoji', v, anim: 'a-float', speed: 4 }); return; }
+    if(b.id === 'dDup'){ const d = W.decos[selDeco]; addDeco({ ...d, x: Math.min(95, (d.x ?? 50) + 6), y: Math.min(95, (d.y ?? 50) + 6) }); return; }
+    if(b.id === 'dDel'){ W.decos.splice(selDeco, 1); if(!W.decos.length) delete W.decos; selDeco = -1; changed('light'); render(); return; }
+    if(b.id === 'dClear'){ if(b.dataset.sure !== '1'){ b.dataset.sure = '1'; b.textContent = 'Click again to remove all'; return; } delete W.decos; selDeco = -1; changed('light'); render(); return; }
+    if(b.id === 'epLookReset'){ delete W.look; changed('light'); render(); return; }
+    if(b.id === 'epTokSave'){ const v = $('epTok').value.trim(); if(!v) return; try{ localStorage.setItem('ghToken', v); }catch(err){} render(); st('Key saved on this device.'); return; }
+    if(b.id === 'epTokForget'){ try{ localStorage.removeItem('ghToken'); }catch(err){} render(); st('Key removed from this device.'); return; }
+    if(b.id === 'epSplash'){ $('splash').classList.remove('gone'); $('editPanel').classList.remove('open'); toast('Click the splash to close it — then ✏️ to keep editing'); return; }
+    if(b.id === 'epDrag'){ dragOn = !dragOn; document.body.classList.toggle('dragChar', dragOn);
+      if(dragOn && W.charX == null) grabCharSpot(); render(); return; }
+    if(b.id === 'epCharReset'){ delete W.charX; delete W.charY; delete W.charH; dragOn = false; document.body.classList.remove('dragChar'); changed('light'); render(); return; }
+    if(b.id === 'epCopy'){
+      const name = $('epNewName').value.trim(); if(!name) return st('Type a name for the new theme first.');
+      let key = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,24) || 'my-theme', n = 2;
+      while(THEMES[key]) key = key.replace(/-\d+$/,'') + '-' + n++;
+      CUSTOM[key] = { base: baseOf(themeKey), label: name };
+      EDITS[key] = { ...JSON.parse(JSON.stringify(W)), label: name };
+      if(!EDITS[key].scene && sceneOf(themeKey) !== baseOf(themeKey)) EDITS[key].scene = sceneOf(themeKey);
+      rebuildTheme(key); buildThemeMenu(); applyTheme(key); W = EDITS[key]; tab = 'text'; render();
+      st(`Made "${name}". Press 💾 Save to keep it.`); return;
+    }
+    if(b.id === 'epReset'){ if(b.dataset.sure !== '1'){ b.dataset.sure = '1'; b.textContent = 'Click again to reset'; return; }
+      W = {}; changed(); setTimeout(render, 220); st('Reset — press 💾 Save to make it live.'); return; }
+    if(b.id === 'epDel'){ if(b.dataset.sure !== '1'){ b.dataset.sure = '1'; b.textContent = 'Click again to delete for good'; return; }
+      if(!getTok()) return st(KEYMSG);
+      const key = themeKey, base = baseOf(key);
+      try{ st('Deleting…');
+        await saveSite(d => { if(d.customThemes) delete d.customThemes[key]; if(d.themeEdits) delete d.themeEdits[key]; if(d.defaultTheme === key) d.defaultTheme = base;
+          (d.songs || []).forEach(s => { if(s.themes) s.themes = s.themes.filter(t => t !== key); }); });
+        delete CUSTOM[key]; delete EDITS[key]; delete lastSaved[key]; delete THEMES[key]; delete CONFIG.themes[key]; if(typeof CURSORS !== 'undefined') delete CURSORS[key];
+        buildThemeMenu(); applyTheme(base); openEditor(); st('✓ Deleted.');
+      }catch(err){ st('Delete failed: ' + err.message); }
+      return; }
+  });
+
+  /* ---------- uploads (go straight to GitHub, shown right away) ---------- */
+  const LIMITS = { playerCover: 500, deco: 600, logo: 900, character: 1500, ornament: 256, cursor: 32, background: 1920, floater: 500 };
+  async function shrink(file, kind){
+    if(/gif|video/.test(file.type)) return file;
+    const bmp = await createImageBitmap(file), max = LIMITS[kind] || 1500;
+    let w = bmp.width, h = bmp.height;
+    if(kind === 'cursor'){ const s = 32 / Math.max(w, h); w = Math.max(1, Math.round(w*s)); h = Math.max(1, Math.round(h*s)); }
+    else if(Math.max(w, h) > max){ const s = max / Math.max(w, h); w = Math.round(w*s); h = Math.round(h*s); }
+    const cvs = document.createElement('canvas'); cvs.width = kind === 'cursor' ? 32 : w; cvs.height = kind === 'cursor' ? 32 : h;
+    cvs.getContext('2d').drawImage(bmp, kind === 'cursor' ? (32-w)/2 : 0, kind === 'cursor' ? (32-h)/2 : 0, w, h);
+    const type = kind === 'cursor' ? 'image/png' : kind === 'background' ? 'image/jpeg' : 'image/webp';
+    return await new Promise(res => cvs.toBlob(b => res(b || file), type, .88));
+  }
+  async function onUpload(e){
+    const el = e.target, kind = el.dataset.up, file = el.files[0]; if(!file) return;
+    if(!getTok()) return st(KEYMSG);
+    if(file.size > 45e6) return st('That file is over 45 MB — try a smaller one (MP4 is much smaller than GIF).');
+    const job = (async () => {
+      st('Getting it ready…');
+      const blob = await shrink(file, kind);
+      const ext = ({ 'image/png':'png', 'image/webp':'webp', 'image/jpeg':'jpg', 'image/gif':'gif', 'video/mp4':'mp4', 'video/webm':'webm' })[blob.type] || file.name.split('.').pop().toLowerCase();
+      const base = file.name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,30) || kind;
+      const path = `${EDIT_DIR}${kind}-${base}-${Date.now().toString(36)}.${ext}`;
+      PREVIEW[path] = URL.createObjectURL(blob);
+      // show it right away while it uploads
+      if(kind === 'character') W.character = [...[].concat(opt(CONFIG).character || []).filter(Boolean), path];
+      else if(kind === 'deco'){ addDeco({ kind: 'img', v: path, anim: 'a-float', speed: 4, glow: false }, true); }
+      else if(kind === 'floater'){ W.effects = W.effects || {}; W.effects.floater = { ...(W.effects.floater || {}), on: true, img: path }; }
+      else W[kind] = path;
+      if(kind === 'cursor' && !W.cursorHotspot) W.cursorHotspot = '0 0';
+      if(kind !== 'deco'){ changed(); setTimeout(render, 220); }
+      st('Uploading to GitHub…');
+      await gh(path, { method:'PUT', body: JSON.stringify({ message:`Add ${kind} picture`, content: await fileB64(blob), branch: GH.branch }) });
+      st('✓ Uploaded. Press 💾 Save to make it live.');
+    })().catch(err => st('Upload failed: ' + err.message));
+    uploads.push(job); el.value = '';
+  }
+
+  /* ---------- drag the character around ---------- */
+  function grabCharSpot(){ const r = $('chara').getBoundingClientRect();
+    W.charX = +((r.left + r.width/2) / innerWidth * 100).toFixed(1); W.charY = +((innerHeight - r.bottom) / innerHeight * 100).toFixed(1);
+    W.charH = +(r.height / innerHeight * 100).toFixed(1); changed('light'); }
+  let drag = null;
+  $('chara').addEventListener('pointerdown', e => { if(!dragOn) return; e.preventDefault(); e.stopPropagation(); $('chara').setPointerCapture(e.pointerId);
+    drag = { x: e.clientX, y: e.clientY, cx: W.charX, cy: W.charY }; });
+  $('chara').addEventListener('pointermove', e => { if(!drag) return;
+    W.charX = +(drag.cx + (e.clientX - drag.x) / innerWidth * 100).toFixed(1); W.charY = +(drag.cy - (e.clientY - drag.y) / innerHeight * 100).toFixed(1); changed('light'); });
+  $('chara').addEventListener('pointerup', () => { if(drag){ drag = null; if(tab === 'pictures') render(); } });
+  $('chara').addEventListener('wheel', e => { if(!dragOn) return; e.preventDefault(); W.charH = Math.max(15, Math.min(120, (W.charH || 70) - Math.sign(e.deltaY) * 3)); changed('light'); }, { passive: false });
+
+  /* ---------- open / close / save / undo ---------- */
+  $('editBtn').style.display = 'grid';
+  $('editBtn').onclick = e => { e.stopPropagation(); $('themeMenu').classList.remove('open'); if(hasMusic) $('musicPanel').classList.remove('open');
+    if($('editPanel').classList.toggle('open')) openEditor(); else document.body.classList.remove('dragChar', 'decoEdit'); };
+  $('editPanel').addEventListener('click', e => e.stopPropagation());
+  $('editPanel').addEventListener('pointerdown', e => e.stopPropagation());
+  $('epClose').onclick = () => { $('editPanel').classList.remove('open'); dragOn = false; document.body.classList.remove('dragChar', 'decoEdit'); };
+  document.querySelector('#editPanel .epTabs').onclick = e => { const b = e.target.closest('button'); if(!b) return; tab = b.dataset.tab; render(); };
+  $('epUndo').onclick = () => { const k = themeKey;
+    if(lastSaved[k]) EDITS[k] = JSON.parse(JSON.stringify(lastSaved[k])); else delete EDITS[k];
+    W = JSON.parse(JSON.stringify(EDITS[k] || {})); rebuildTheme(k); applyTheme(k); buildThemeMenu(); render(); st('Back to the last saved version.'); };
+  $('epSave').onclick = async () => {
+    if(!getTok()) return st(KEYMSG);
+    const k = themeKey, data = Object.keys(W).length ? JSON.parse(JSON.stringify(W)) : null;
+    try{
+      $('epSave').disabled = true;
+      if(uploads.length){ st('Finishing uploads…'); await Promise.all(uploads); uploads = []; }
+      st('Saving…');
+      await saveSite(d => { d.themeEdits = d.themeEdits || {}; if(data) d.themeEdits[k] = data; else delete d.themeEdits[k];
+        d.customThemes = { ...(d.customThemes || {}), ...CUSTOM }; });
+      if(data) lastSaved[k] = data; else delete lastSaved[k];
+      st(`✓ Saved "${T.label}". Live for everyone in about a minute.`);
+    }catch(err){ st('Save failed: ' + err.message); }
+    finally{ $('epSave').disabled = false; }
+  };
+  addEventListener('beforeunload', e => { if(JSON.stringify(EDITS[themeKey] || {}) !== JSON.stringify(lastSaved[themeKey] || {})){ e.preventDefault(); e.returnValue = ''; } });
+  window._edSynced = d => { lastSaved = JSON.parse(JSON.stringify(d.themeEdits || {})); if($('editPanel').classList.contains('open')) openEditor(); };
+  // switching themes from 🎨 while the editor is open edits the new one
+  $('themeMenu').addEventListener('click', () => { if($('editPanel').classList.contains('open')) setTimeout(openEditor, 50); });
 }
 </script>
 <script>
